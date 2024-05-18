@@ -15,9 +15,16 @@ class _FlushViewState extends State<FlushView> {
       body: Column(
         children: [
           Container(child: Text("Page 1")),
-          OutlinedButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const PriorityView()));
-          }, child: Text("btn"))
+          Row(
+            children: [
+              OutlinedButton(onPressed: () {
+                Navigator.pop(context);
+              }, child: Text("Cancel")),
+              OutlinedButton(onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const PriorityView()));
+              }, child: Text("Next"))
+            ],
+          )
         ],
       )
     );

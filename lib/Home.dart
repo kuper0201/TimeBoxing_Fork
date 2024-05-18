@@ -22,7 +22,7 @@ class _HomeViewState extends State<HomeView> {
             width: 100,
             height: 50,
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 100, 230, 113),
+              color: Colors.lightGreen,
               borderRadius: BorderRadius.circular(15)
             ),
             child: const Center(

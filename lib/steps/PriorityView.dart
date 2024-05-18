@@ -15,9 +15,16 @@ class _PriorityViewState extends State<PriorityView> {
       body: Column(
         children: [
           Container(child: Text("Page 2")),
-          OutlinedButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const PlanView()));
-          }, child: Text("btn"))
+          Row(
+            children: [
+              OutlinedButton(onPressed: () {
+                Navigator.pop(context);
+              }, child: Text("Prev")),
+              OutlinedButton(onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const PlanView()));
+              }, child: Text("Next"))
+            ],
+          )
         ],
       )
     );
