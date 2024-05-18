@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:time_boxing/steps/FlushView.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({Key? key}) : super(key: key);
@@ -15,7 +16,7 @@ class _HomeViewState extends State<HomeView> {
       Center(
         child: InkWell(
           onTap: () {
-
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const FlushView()));
           },
           child: Ink(
             width: 100,
