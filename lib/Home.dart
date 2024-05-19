@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:time_boxing/steps/FlushView.dart';
 
 class HomeView extends StatefulWidget {
@@ -19,8 +20,8 @@ class _HomeViewState extends State<HomeView> {
             Navigator.push(context, MaterialPageRoute(builder: (context) => const FlushView()));
           },
           child: Ink(
-            width: 100,
-            height: 50,
+            width: 300,
+            height: 200,
             decoration: BoxDecoration(
               color: Colors.lightGreen,
               borderRadius: BorderRadius.circular(15)
@@ -28,8 +29,8 @@ class _HomeViewState extends State<HomeView> {
             child: const Center(
               child: Column(
                 children: [
-                  Text("Add", style: TextStyle(fontSize: 18)),
-                  Icon(Icons.add)
+                  Expanded(child: Text("Add", style: TextStyle(fontSize: 28))),
+                  Expanded(child: Icon(Icons.add, size: 50,))
                 ]
               ),
             )

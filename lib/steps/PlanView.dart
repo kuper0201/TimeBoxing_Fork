@@ -11,20 +11,26 @@ class _PlanViewState extends State<PlanView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Step 3"),
+        centerTitle: true,
+        backgroundColor: Colors.pink,
+      ),
       body: Column(
         children: [
-          Container(child: Text("Page 3")),
           Row(
             children: [
-              OutlinedButton(onPressed: () {
-                Navigator.pop(context);
-              }, child: Text("Prev")),
-              OutlinedButton(onPressed: () {
-                // DB 저장
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: OutlinedButton(onPressed: () {
+                    // DB 저장
 
-                // 초기화면으로 돌아감
-                Navigator.popUntil(context, (route) => route.isFirst);
-              }, child: Text("Save"))
+                    // 초기화면으로 돌아감
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                  }, child: const Text("저장"))
+                )
+              )
             ],
           )
         ],
