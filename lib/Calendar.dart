@@ -2,6 +2,10 @@ import 'package:table_calendar/table_calendar.dart'; // 캘린더
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/material.dart';
 
+import 'steps/FlushView.dart';
+import 'steps/PlanningView.dart';
+import 'steps/PriView.dart';
+
 class CalendarView extends StatefulWidget {
   const CalendarView({Key? key}) : super(key: key);
 
@@ -46,9 +50,17 @@ class _CalendarViewState extends State<CalendarView> {
               return isSameDay(selectedDay, day);
             },
           ),
-          Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(), onPressed:(){print("flush");} ,child: Text("flush"))),
-          Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(), onPressed:(){print("pri");} ,child: Text("pri"))),
-          Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(), onPressed:(){print("planning");} ,child: Text("planning")))
+          Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(), 
+                                        onPressed:(){
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => const FlushView(),));
+                                        },
+                                        child: Text("flush"))),
+          Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(),
+                                        onPressed:(){Navigator.push(context, MaterialPageRoute(builder: (context) => PriorityView()));},
+                                        child: Text("pri"))),
+          Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(), 
+                                        onPressed:(){Navigator.push(context, MaterialPageRoute(builder: (context) => PlanView()));},
+                                        child: Text("planning")))
         ]
       )
     );
