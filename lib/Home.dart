@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:time_boxing/steps/FlushView.dart';
+import 'package:time_boxing/steps/StepViewPage.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({Key? key}) : super(key: key);
@@ -13,11 +12,10 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: 
-      Center(
+      body: Center(
         child: InkWell(
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const FlushView()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const StepViewPage()));
           },
           child: Ink(
             width: 300,

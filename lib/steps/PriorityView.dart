@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:time_boxing/steps/PlanView.dart';
 
 class PriorityView extends StatefulWidget {
-  const PriorityView({super.key, required this.nameList});
   final List<String> nameList;
-
+  final PageController pc;
+  const PriorityView({super.key, required this.nameList, required this.pc});
+  
   @override
   _PriorityViewState createState() => _PriorityViewState();
 }
@@ -17,9 +17,15 @@ class _PriorityViewState extends State<PriorityView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Step 2"),
+        title: const Text("Step 2: Priority"),
         centerTitle: true,
         backgroundColor: Colors.lightBlue,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded),
+          onPressed: () {
+            widget.pc.previousPage(duration: const Duration(milliseconds: 500), curve: Curves.ease);
+          },
+        ),
       ),
       body: Column(
         children: [
@@ -31,29 +37,23 @@ class _PriorityViewState extends State<PriorityView> {
               itemBuilder: (BuildContext context, int index) {
                 return GestureDetector(
                   onTap: () {
-                    if(priority.containsKey(widget.nameList[index])) {
-                      priority.remove(widget.nameList[index]);
-                    } else {
-                      priority[widget.nameList[index]] = 0;
-                    }
+                    setState(() {
+                      if(priority.containsKey(widget.nameList[index])) {
+                        priority.remove(widget.nameList[index]);
+                        // priIdx--;
+                      } else {
+                        // priority[nameList[index]] = priIdx;
+                        // priIdx++;
+                      }
+                    });
                   },
                   child: Card(
                     child: ListTile(
-                      title: Expanded(child: Padding(padding: EdgeInsets.only(left: 10), child: Text("${widget.nameList[index]}", style: const TextStyle(fontSize: 21)))),
-                      trailing: Text("${index}")
+                      title: Expanded(child: Padding(padding: const EdgeInsets.only(left: 10), child: Text("${widget.nameList[index]}", style: const TextStyle(fontSize: 21)))),
+                      trailing: Text("${priority.containsKey(widget.nameList[index]) ? priority[widget.nameList[index]] : "-1"}")
                     )
                   )
                 );
-                
-                
-                // InkWell(
-                //   onTap: () {
-                //     
-                //   },
-                //   child: Center(
-                //     child: Text("${widget.nameList[index]}", style: const TextStyle(fontSize: 21)),
-                //   ),
-                // );
               }
             )
           ),
@@ -63,7 +63,7 @@ class _PriorityViewState extends State<PriorityView> {
                 child: Padding(
                   padding: const EdgeInsets.all(10),
                   child: OutlinedButton(onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const PlanView()));
+                    widget.pc.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.ease);
                   }, child: const Text("다음"))
                 )
               )
