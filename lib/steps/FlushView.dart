@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 
 class FlushView extends StatefulWidget {
   final List<String> nameList;
+  final List<String> priority;
   final PageController pc;
-  const FlushView({Key? key, required this.nameList, required this.pc}) : super(key: key);
+  const FlushView({Key? key, required this.nameList, required this.priority, required this.pc}) : super(key: key);
 
   @override
   _FlushViewState createState() => _FlushViewState();
 }
 
 class _FlushViewState extends State<FlushView> {
-  
   TextEditingController tc = TextEditingController();
-  PageController pc = PageController(initialPage: 0);
 
   @override
   Widget build(BuildContext context) {
@@ -49,10 +48,14 @@ return Scaffold(
                       trailing: IconButton(
                         onPressed: () {
                           setState(() {
+                            if(widget.priority.contains(widget.nameList[index])) {
+                              widget.priority.remove(widget.nameList[index]);
+                            }
+
                             widget.nameList.removeAt(index);
                           });
                         },
-                        icon: Icon(Icons.delete_forever, color: Colors.red,)
+                        icon: const Icon(Icons.delete_forever, color: Colors.red,)
                       )
                     )
                   );
@@ -79,7 +82,7 @@ return Scaffold(
                   padding: const EdgeInsets.all(10),
                   child: OutlinedButton(
                     onPressed: () {
-                      pc.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.ease);
+                      widget.pc.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.ease);
                     },
                     child: const Text("다음"))
                 )
