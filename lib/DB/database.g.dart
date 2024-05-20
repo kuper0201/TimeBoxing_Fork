@@ -9,15 +9,11 @@ class $TimeBoxingInfoTable extends TimeBoxingInfo
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $TimeBoxingInfoTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
+      'date', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
   static const VerificationMeta _taskMeta = const VerificationMeta('task');
   @override
   late final GeneratedColumn<String> task = GeneratedColumn<String>(
@@ -41,14 +37,9 @@ class $TimeBoxingInfoTable extends TimeBoxingInfo
   late final GeneratedColumn<int> endTime = GeneratedColumn<int>(
       'end_time', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _dateMeta = const VerificationMeta('date');
-  @override
-  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
-      'date', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, task, priority, startTime, endTime, date];
+      [date, task, priority, startTime, endTime];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -59,8 +50,11 @@ class $TimeBoxingInfoTable extends TimeBoxingInfo
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    if (data.containsKey('date')) {
+      context.handle(
+          _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
+    } else if (isInserting) {
+      context.missing(_dateMeta);
     }
     if (data.containsKey('task')) {
       context.handle(
@@ -86,23 +80,17 @@ class $TimeBoxingInfoTable extends TimeBoxingInfo
     } else if (isInserting) {
       context.missing(_endTimeMeta);
     }
-    if (data.containsKey('date')) {
-      context.handle(
-          _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
-    } else if (isInserting) {
-      context.missing(_dateMeta);
-    }
     return context;
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => const {};
   @override
   TimeBoxingInfoData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return TimeBoxingInfoData(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      date: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
       task: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}task'])!,
       priority: attachedDatabase.typeMapping
@@ -111,8 +99,6 @@ class $TimeBoxingInfoTable extends TimeBoxingInfo
           .read(DriftSqlType.int, data['${effectivePrefix}start_time'])!,
       endTime: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}end_time'])!,
-      date: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
     );
   }
 
@@ -124,39 +110,35 @@ class $TimeBoxingInfoTable extends TimeBoxingInfo
 
 class TimeBoxingInfoData extends DataClass
     implements Insertable<TimeBoxingInfoData> {
-  final int id;
+  final DateTime date;
   final String task;
   final int priority;
   final int startTime;
   final int endTime;
-  final DateTime date;
   const TimeBoxingInfoData(
-      {required this.id,
+      {required this.date,
       required this.task,
       required this.priority,
       required this.startTime,
-      required this.endTime,
-      required this.date});
+      required this.endTime});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['date'] = Variable<DateTime>(date);
     map['task'] = Variable<String>(task);
     map['priority'] = Variable<int>(priority);
     map['start_time'] = Variable<int>(startTime);
     map['end_time'] = Variable<int>(endTime);
-    map['date'] = Variable<DateTime>(date);
     return map;
   }
 
   TimeBoxingInfoCompanion toCompanion(bool nullToAbsent) {
     return TimeBoxingInfoCompanion(
-      id: Value(id),
+      date: Value(date),
       task: Value(task),
       priority: Value(priority),
       startTime: Value(startTime),
       endTime: Value(endTime),
-      date: Value(date),
     );
   }
 
@@ -164,136 +146,130 @@ class TimeBoxingInfoData extends DataClass
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return TimeBoxingInfoData(
-      id: serializer.fromJson<int>(json['id']),
+      date: serializer.fromJson<DateTime>(json['date']),
       task: serializer.fromJson<String>(json['task']),
       priority: serializer.fromJson<int>(json['priority']),
       startTime: serializer.fromJson<int>(json['startTime']),
       endTime: serializer.fromJson<int>(json['endTime']),
-      date: serializer.fromJson<DateTime>(json['date']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'date': serializer.toJson<DateTime>(date),
       'task': serializer.toJson<String>(task),
       'priority': serializer.toJson<int>(priority),
       'startTime': serializer.toJson<int>(startTime),
       'endTime': serializer.toJson<int>(endTime),
-      'date': serializer.toJson<DateTime>(date),
     };
   }
 
   TimeBoxingInfoData copyWith(
-          {int? id,
+          {DateTime? date,
           String? task,
           int? priority,
           int? startTime,
-          int? endTime,
-          DateTime? date}) =>
+          int? endTime}) =>
       TimeBoxingInfoData(
-        id: id ?? this.id,
+        date: date ?? this.date,
         task: task ?? this.task,
         priority: priority ?? this.priority,
         startTime: startTime ?? this.startTime,
         endTime: endTime ?? this.endTime,
-        date: date ?? this.date,
       );
   @override
   String toString() {
     return (StringBuffer('TimeBoxingInfoData(')
-          ..write('id: $id, ')
+          ..write('date: $date, ')
           ..write('task: $task, ')
           ..write('priority: $priority, ')
           ..write('startTime: $startTime, ')
-          ..write('endTime: $endTime, ')
-          ..write('date: $date')
+          ..write('endTime: $endTime')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, task, priority, startTime, endTime, date);
+  int get hashCode => Object.hash(date, task, priority, startTime, endTime);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is TimeBoxingInfoData &&
-          other.id == this.id &&
+          other.date == this.date &&
           other.task == this.task &&
           other.priority == this.priority &&
           other.startTime == this.startTime &&
-          other.endTime == this.endTime &&
-          other.date == this.date);
+          other.endTime == this.endTime);
 }
 
 class TimeBoxingInfoCompanion extends UpdateCompanion<TimeBoxingInfoData> {
-  final Value<int> id;
+  final Value<DateTime> date;
   final Value<String> task;
   final Value<int> priority;
   final Value<int> startTime;
   final Value<int> endTime;
-  final Value<DateTime> date;
+  final Value<int> rowid;
   const TimeBoxingInfoCompanion({
-    this.id = const Value.absent(),
+    this.date = const Value.absent(),
     this.task = const Value.absent(),
     this.priority = const Value.absent(),
     this.startTime = const Value.absent(),
     this.endTime = const Value.absent(),
-    this.date = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   TimeBoxingInfoCompanion.insert({
-    this.id = const Value.absent(),
+    required DateTime date,
     required String task,
     required int priority,
     required int startTime,
     required int endTime,
-    required DateTime date,
-  })  : task = Value(task),
+    this.rowid = const Value.absent(),
+  })  : date = Value(date),
+        task = Value(task),
         priority = Value(priority),
         startTime = Value(startTime),
-        endTime = Value(endTime),
-        date = Value(date);
+        endTime = Value(endTime);
   static Insertable<TimeBoxingInfoData> custom({
-    Expression<int>? id,
+    Expression<DateTime>? date,
     Expression<String>? task,
     Expression<int>? priority,
     Expression<int>? startTime,
     Expression<int>? endTime,
-    Expression<DateTime>? date,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (id != null) 'id': id,
+      if (date != null) 'date': date,
       if (task != null) 'task': task,
       if (priority != null) 'priority': priority,
       if (startTime != null) 'start_time': startTime,
       if (endTime != null) 'end_time': endTime,
-      if (date != null) 'date': date,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   TimeBoxingInfoCompanion copyWith(
-      {Value<int>? id,
+      {Value<DateTime>? date,
       Value<String>? task,
       Value<int>? priority,
       Value<int>? startTime,
       Value<int>? endTime,
-      Value<DateTime>? date}) {
+      Value<int>? rowid}) {
     return TimeBoxingInfoCompanion(
-      id: id ?? this.id,
+      date: date ?? this.date,
       task: task ?? this.task,
       priority: priority ?? this.priority,
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
-      date: date ?? this.date,
+      rowid: rowid ?? this.rowid,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
+    if (date.present) {
+      map['date'] = Variable<DateTime>(date.value);
     }
     if (task.present) {
       map['task'] = Variable<String>(task.value);
@@ -307,8 +283,8 @@ class TimeBoxingInfoCompanion extends UpdateCompanion<TimeBoxingInfoData> {
     if (endTime.present) {
       map['end_time'] = Variable<int>(endTime.value);
     }
-    if (date.present) {
-      map['date'] = Variable<DateTime>(date.value);
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -316,12 +292,12 @@ class TimeBoxingInfoCompanion extends UpdateCompanion<TimeBoxingInfoData> {
   @override
   String toString() {
     return (StringBuffer('TimeBoxingInfoCompanion(')
-          ..write('id: $id, ')
+          ..write('date: $date, ')
           ..write('task: $task, ')
           ..write('priority: $priority, ')
           ..write('startTime: $startTime, ')
           ..write('endTime: $endTime, ')
-          ..write('date: $date')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -333,15 +309,6 @@ class $ZandiInfoTable extends ZandiInfo
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $ZandiInfoTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
   static const VerificationMeta _dateMeta = const VerificationMeta('date');
   @override
   late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
@@ -353,7 +320,7 @@ class $ZandiInfoTable extends ZandiInfo
       'stack', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns => [id, date, stack];
+  List<GeneratedColumn> get $columns => [date, stack];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -364,9 +331,6 @@ class $ZandiInfoTable extends ZandiInfo
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
     if (data.containsKey('date')) {
       context.handle(
           _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
@@ -383,13 +347,11 @@ class $ZandiInfoTable extends ZandiInfo
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => const {};
   @override
   ZandiInfoData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return ZandiInfoData(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       date: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
       stack: attachedDatabase.typeMapping
@@ -404,15 +366,12 @@ class $ZandiInfoTable extends ZandiInfo
 }
 
 class ZandiInfoData extends DataClass implements Insertable<ZandiInfoData> {
-  final int id;
   final DateTime date;
   final int stack;
-  const ZandiInfoData(
-      {required this.id, required this.date, required this.stack});
+  const ZandiInfoData({required this.date, required this.stack});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
     map['date'] = Variable<DateTime>(date);
     map['stack'] = Variable<int>(stack);
     return map;
@@ -420,7 +379,6 @@ class ZandiInfoData extends DataClass implements Insertable<ZandiInfoData> {
 
   ZandiInfoCompanion toCompanion(bool nullToAbsent) {
     return ZandiInfoCompanion(
-      id: Value(id),
       date: Value(date),
       stack: Value(stack),
     );
@@ -430,7 +388,6 @@ class ZandiInfoData extends DataClass implements Insertable<ZandiInfoData> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return ZandiInfoData(
-      id: serializer.fromJson<int>(json['id']),
       date: serializer.fromJson<DateTime>(json['date']),
       stack: serializer.fromJson<int>(json['stack']),
     );
@@ -439,22 +396,18 @@ class ZandiInfoData extends DataClass implements Insertable<ZandiInfoData> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
       'date': serializer.toJson<DateTime>(date),
       'stack': serializer.toJson<int>(stack),
     };
   }
 
-  ZandiInfoData copyWith({int? id, DateTime? date, int? stack}) =>
-      ZandiInfoData(
-        id: id ?? this.id,
+  ZandiInfoData copyWith({DateTime? date, int? stack}) => ZandiInfoData(
         date: date ?? this.date,
         stack: stack ?? this.stack,
       );
   @override
   String toString() {
     return (StringBuffer('ZandiInfoData(')
-          ..write('id: $id, ')
           ..write('date: $date, ')
           ..write('stack: $stack')
           ..write(')'))
@@ -462,63 +415,62 @@ class ZandiInfoData extends DataClass implements Insertable<ZandiInfoData> {
   }
 
   @override
-  int get hashCode => Object.hash(id, date, stack);
+  int get hashCode => Object.hash(date, stack);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is ZandiInfoData &&
-          other.id == this.id &&
           other.date == this.date &&
           other.stack == this.stack);
 }
 
 class ZandiInfoCompanion extends UpdateCompanion<ZandiInfoData> {
-  final Value<int> id;
   final Value<DateTime> date;
   final Value<int> stack;
+  final Value<int> rowid;
   const ZandiInfoCompanion({
-    this.id = const Value.absent(),
     this.date = const Value.absent(),
     this.stack = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   ZandiInfoCompanion.insert({
-    this.id = const Value.absent(),
     required DateTime date,
     required int stack,
+    this.rowid = const Value.absent(),
   })  : date = Value(date),
         stack = Value(stack);
   static Insertable<ZandiInfoData> custom({
-    Expression<int>? id,
     Expression<DateTime>? date,
     Expression<int>? stack,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (id != null) 'id': id,
       if (date != null) 'date': date,
       if (stack != null) 'stack': stack,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   ZandiInfoCompanion copyWith(
-      {Value<int>? id, Value<DateTime>? date, Value<int>? stack}) {
+      {Value<DateTime>? date, Value<int>? stack, Value<int>? rowid}) {
     return ZandiInfoCompanion(
-      id: id ?? this.id,
       date: date ?? this.date,
       stack: stack ?? this.stack,
+      rowid: rowid ?? this.rowid,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
     if (date.present) {
       map['date'] = Variable<DateTime>(date.value);
     }
     if (stack.present) {
       map['stack'] = Variable<int>(stack.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -526,17 +478,17 @@ class ZandiInfoCompanion extends UpdateCompanion<ZandiInfoData> {
   @override
   String toString() {
     return (StringBuffer('ZandiInfoCompanion(')
-          ..write('id: $id, ')
           ..write('date: $date, ')
-          ..write('stack: $stack')
+          ..write('stack: $stack, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-abstract class _$AppDatabase extends GeneratedDatabase {
-  _$AppDatabase(QueryExecutor e) : super(e);
-  _$AppDatabaseManager get managers => _$AppDatabaseManager(this);
+abstract class _$Mydatabase extends GeneratedDatabase {
+  _$Mydatabase(QueryExecutor e) : super(e);
+  _$MydatabaseManager get managers => _$MydatabaseManager(this);
   late final $TimeBoxingInfoTable timeBoxingInfo = $TimeBoxingInfoTable(this);
   late final $ZandiInfoTable zandiInfo = $ZandiInfoTable(this);
   @override
@@ -549,25 +501,25 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 
 typedef $$TimeBoxingInfoTableInsertCompanionBuilder = TimeBoxingInfoCompanion
     Function({
-  Value<int> id,
+  required DateTime date,
   required String task,
   required int priority,
   required int startTime,
   required int endTime,
-  required DateTime date,
+  Value<int> rowid,
 });
 typedef $$TimeBoxingInfoTableUpdateCompanionBuilder = TimeBoxingInfoCompanion
     Function({
-  Value<int> id,
+  Value<DateTime> date,
   Value<String> task,
   Value<int> priority,
   Value<int> startTime,
   Value<int> endTime,
-  Value<DateTime> date,
+  Value<int> rowid,
 });
 
 class $$TimeBoxingInfoTableTableManager extends RootTableManager<
-    _$AppDatabase,
+    _$Mydatabase,
     $TimeBoxingInfoTable,
     TimeBoxingInfoData,
     $$TimeBoxingInfoTableFilterComposer,
@@ -575,8 +527,7 @@ class $$TimeBoxingInfoTableTableManager extends RootTableManager<
     $$TimeBoxingInfoTableProcessedTableManager,
     $$TimeBoxingInfoTableInsertCompanionBuilder,
     $$TimeBoxingInfoTableUpdateCompanionBuilder> {
-  $$TimeBoxingInfoTableTableManager(
-      _$AppDatabase db, $TimeBoxingInfoTable table)
+  $$TimeBoxingInfoTableTableManager(_$Mydatabase db, $TimeBoxingInfoTable table)
       : super(TableManagerState(
           db: db,
           table: table,
@@ -587,42 +538,42 @@ class $$TimeBoxingInfoTableTableManager extends RootTableManager<
           getChildManagerBuilder: (p) =>
               $$TimeBoxingInfoTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
+            Value<DateTime> date = const Value.absent(),
             Value<String> task = const Value.absent(),
             Value<int> priority = const Value.absent(),
             Value<int> startTime = const Value.absent(),
             Value<int> endTime = const Value.absent(),
-            Value<DateTime> date = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               TimeBoxingInfoCompanion(
-            id: id,
+            date: date,
             task: task,
             priority: priority,
             startTime: startTime,
             endTime: endTime,
-            date: date,
+            rowid: rowid,
           ),
           getInsertCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
+            required DateTime date,
             required String task,
             required int priority,
             required int startTime,
             required int endTime,
-            required DateTime date,
+            Value<int> rowid = const Value.absent(),
           }) =>
               TimeBoxingInfoCompanion.insert(
-            id: id,
+            date: date,
             task: task,
             priority: priority,
             startTime: startTime,
             endTime: endTime,
-            date: date,
+            rowid: rowid,
           ),
         ));
 }
 
 class $$TimeBoxingInfoTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
+    _$Mydatabase,
     $TimeBoxingInfoTable,
     TimeBoxingInfoData,
     $$TimeBoxingInfoTableFilterComposer,
@@ -634,10 +585,10 @@ class $$TimeBoxingInfoTableProcessedTableManager extends ProcessedTableManager<
 }
 
 class $$TimeBoxingInfoTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $TimeBoxingInfoTable> {
+    extends FilterComposer<_$Mydatabase, $TimeBoxingInfoTable> {
   $$TimeBoxingInfoTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
-      column: $state.table.id,
+  ColumnFilters<DateTime> get date => $state.composableBuilder(
+      column: $state.table.date,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -660,18 +611,13 @@ class $$TimeBoxingInfoTableFilterComposer
       column: $state.table.endTime,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<DateTime> get date => $state.composableBuilder(
-      column: $state.table.date,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
 class $$TimeBoxingInfoTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $TimeBoxingInfoTable> {
+    extends OrderingComposer<_$Mydatabase, $TimeBoxingInfoTable> {
   $$TimeBoxingInfoTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
-      column: $state.table.id,
+  ColumnOrderings<DateTime> get date => $state.composableBuilder(
+      column: $state.table.date,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -694,26 +640,21 @@ class $$TimeBoxingInfoTableOrderingComposer
       column: $state.table.endTime,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<DateTime> get date => $state.composableBuilder(
-      column: $state.table.date,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
 typedef $$ZandiInfoTableInsertCompanionBuilder = ZandiInfoCompanion Function({
-  Value<int> id,
   required DateTime date,
   required int stack,
+  Value<int> rowid,
 });
 typedef $$ZandiInfoTableUpdateCompanionBuilder = ZandiInfoCompanion Function({
-  Value<int> id,
   Value<DateTime> date,
   Value<int> stack,
+  Value<int> rowid,
 });
 
 class $$ZandiInfoTableTableManager extends RootTableManager<
-    _$AppDatabase,
+    _$Mydatabase,
     $ZandiInfoTable,
     ZandiInfoData,
     $$ZandiInfoTableFilterComposer,
@@ -721,7 +662,7 @@ class $$ZandiInfoTableTableManager extends RootTableManager<
     $$ZandiInfoTableProcessedTableManager,
     $$ZandiInfoTableInsertCompanionBuilder,
     $$ZandiInfoTableUpdateCompanionBuilder> {
-  $$ZandiInfoTableTableManager(_$AppDatabase db, $ZandiInfoTable table)
+  $$ZandiInfoTableTableManager(_$Mydatabase db, $ZandiInfoTable table)
       : super(TableManagerState(
           db: db,
           table: table,
@@ -732,30 +673,30 @@ class $$ZandiInfoTableTableManager extends RootTableManager<
           getChildManagerBuilder: (p) =>
               $$ZandiInfoTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
             Value<DateTime> date = const Value.absent(),
             Value<int> stack = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               ZandiInfoCompanion(
-            id: id,
             date: date,
             stack: stack,
+            rowid: rowid,
           ),
           getInsertCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
             required DateTime date,
             required int stack,
+            Value<int> rowid = const Value.absent(),
           }) =>
               ZandiInfoCompanion.insert(
-            id: id,
             date: date,
             stack: stack,
+            rowid: rowid,
           ),
         ));
 }
 
 class $$ZandiInfoTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
+    _$Mydatabase,
     $ZandiInfoTable,
     ZandiInfoData,
     $$ZandiInfoTableFilterComposer,
@@ -767,13 +708,8 @@ class $$ZandiInfoTableProcessedTableManager extends ProcessedTableManager<
 }
 
 class $$ZandiInfoTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $ZandiInfoTable> {
+    extends FilterComposer<_$Mydatabase, $ZandiInfoTable> {
   $$ZandiInfoTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
   ColumnFilters<DateTime> get date => $state.composableBuilder(
       column: $state.table.date,
       builder: (column, joinBuilders) =>
@@ -786,13 +722,8 @@ class $$ZandiInfoTableFilterComposer
 }
 
 class $$ZandiInfoTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $ZandiInfoTable> {
+    extends OrderingComposer<_$Mydatabase, $ZandiInfoTable> {
   $$ZandiInfoTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
   ColumnOrderings<DateTime> get date => $state.composableBuilder(
       column: $state.table.date,
       builder: (column, joinBuilders) =>
@@ -804,9 +735,9 @@ class $$ZandiInfoTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-class _$AppDatabaseManager {
-  final _$AppDatabase _db;
-  _$AppDatabaseManager(this._db);
+class _$MydatabaseManager {
+  final _$Mydatabase _db;
+  _$MydatabaseManager(this._db);
   $$TimeBoxingInfoTableTableManager get timeBoxingInfo =>
       $$TimeBoxingInfoTableTableManager(_db, _db.timeBoxingInfo);
   $$ZandiInfoTableTableManager get zandiInfo =>
