@@ -38,6 +38,14 @@ class _FlushViewState extends State<FlushView> {
                   return Card(
                     child: ListTile(
                       title: Expanded(child: Padding(padding: EdgeInsets.only(left: 10), child: Text("${nameList[index]}", style: const TextStyle(fontSize: 21)))),
+                      trailing: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            nameList.removeAt(index);
+                          });
+                        },
+                        icon: Icon(Icons.delete_forever, color: Colors.red,)
+                      )
                     )
                   );
                 }
