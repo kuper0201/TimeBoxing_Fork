@@ -1,4 +1,4 @@
-import 'package:table_calendar/table_calendar.dart'; // 캘린더
+import 'package:syncfusion_flutter_calendar/calendar.dart' as CV; // 캘린더
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/material.dart';
 
@@ -36,19 +36,10 @@ class _CalendarViewState extends State<CalendarView> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          TableCalendar(
-            firstDay: DateTime.utc(2021),
-            lastDay: DateTime.utc(2030),
-            focusedDay: focusedDay,
-            onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
-              setState(() {
-                this.selectedDay = selectedDay;
-                this.focusedDay = focusedDay;
-              });
-            },
-            selectedDayPredicate: (DateTime day) {
-              return isSameDay(selectedDay, day);
-            },
+          CV.SfCalendar(
+            view: CV.CalendarView.month,
+            showNavigationArrow: true,
+            todayHighlightColor: Colors.red,
           ),
           Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(), 
                                         onPressed:(){
