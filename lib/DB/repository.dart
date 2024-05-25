@@ -3,8 +3,6 @@ import 'package:time_boxing/DB/database.dart';
 import 'package:flutter/material.dart';
 import 'package:time_boxing/DB/models.dart';
 
-import 'package:time_boxing/DB/TO.dart';
-
 class TimeBoxingRepository extends ChangeNotifier {
   //field
 
@@ -20,15 +18,32 @@ class TimeBoxingRepository extends ChangeNotifier {
   }
 
   // insert
-  Future<int> insertTimeBoxing(DateTime date, String task, int priority, int startTime, int endTime) async {
-    return await _myDatabase.into(_myDatabase.timeBoxingInfo).insert(
+  Future<int> insertTimeBoxing(DateTime date, String task, int priority, int startTime, int endTime) {
+    return _myDatabase.into(_myDatabase.timeBoxingInfo).insert(
         TimeBoxingInfoCompanion.insert(date: date, task: task, priority: priority, startTime: startTime, endTime: endTime));
   }
 
-  Future<int> insertZandiInfo(DateTime date, int stack) async {
-    return await _myDatabase.into(_myDatabase.zandiInfo).insert(ZandiInfoCompanion.insert(date: date, stack: stack));
+  Future<int> insertZandiInfo(DateTime date, int stack) {
+    return _myDatabase.into(_myDatabase.zandiInfo).insert(ZandiInfoCompanion.insert(date: date, stack: stack));
+  }
+  
+  //읽기
+  Future<List<TimeBoxingInfoData>> selectTimeBoxing(DateTime date) {
+    final result = (_myDatabase.select(_myDatabase.timeBoxingInfo)..where((t) =>
+    t.date.year.equals(date.year) &
+    t.date.month.equals(date.month) &
+    t.date.day.equals(date.day)
+    )).get();
+    return result;
   }
 
-  //읽기
+  Future<List<ZandiInfoData>> selectZandi(DateTime date) {
+    final result = (_myDatabase.select(_myDatabase.zandiInfo)..where((t) =>
+    t.date.year.equals(date.year) &
+    t.date.month.equals(date.month) &
+    t.date.day.equals(date.day)
+    )).get();
+    return result;
+  }
 
 }

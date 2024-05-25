@@ -3,6 +3,7 @@ import 'package:time_boxing/Calendar.dart';
 import 'package:time_boxing/History.dart';
 import 'package:time_boxing/Home.dart';
 import 'package:time_boxing/Setting.dart';
+import 'package:time_boxing/DB/testpage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,7 +34,8 @@ class _MainViewState extends State<MainView> {
     HomeView(),
     CalendarView(),
     HistoryView(),
-    SettingView()
+    SettingView(),
+    Testpage()
   ];
  
   void _onItemTapped(int index) {
@@ -63,6 +65,10 @@ class _MainViewState extends State<MainView> {
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
             label: 'Setting',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'testpage',
           ),
         ],
         type: BottomNavigationBarType.fixed,
