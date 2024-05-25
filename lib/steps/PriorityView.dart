@@ -61,9 +61,12 @@ class _PriorityViewState extends State<PriorityView> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(10),
-                  child: OutlinedButton(onPressed: () {
-                    widget.pc.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.ease);
-                  }, child: const Text("다음"))
+                  child: OutlinedButton(
+                    onPressed: () {
+                      widget.pc.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.ease);
+                    },
+                    child: const Text("다음")
+                  )
                 )
               )
             ],
