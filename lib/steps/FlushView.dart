@@ -1,4 +1,8 @@
+import 'dart:ffi';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class FlushView extends StatefulWidget {
   final List<String> nameList;
@@ -11,7 +15,41 @@ class FlushView extends StatefulWidget {
 }
 
 class _FlushViewState extends State<FlushView> {
+  GlobalKey gk = GlobalKey();
+  GlobalKey gk2 = GlobalKey();
+  GlobalKey gk3 = GlobalKey();
+  bool isOver = false;
+
   TextEditingController tc = TextEditingController();
+
+  bool checkSize() {
+    final rb1 = gk.currentContext!.findRenderObject() as RenderBox;
+    final rb2 = gk2.currentContext!.findRenderObject() as RenderBox;
+    final rb3 = gk3.currentContext!.findRenderObject() as RenderBox;
+    
+    return rb1.size.height <= rb2.size.height * (widget.nameList.length + 1) + rb3.size.height;
+  }
+
+  Widget getButton() {
+    return OutlinedButton.icon(
+      onPressed: () {
+        setState(() {
+          if(!widget.nameList.contains(tc.text)) {
+            if(tc.text.isNotEmpty) {
+              widget.nameList.add(tc.text);
+              tc.clear();
+            }
+          }
+        
+          if(gk2.currentContext != null) {
+            isOver = checkSize();
+          }
+        });
+      },
+      icon: const Icon(Icons.add),
+      label: const Text("Add")
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,18 +69,27 @@ class _FlushViewState extends State<FlushView> {
         children: [
           Expanded(
             child: ListView.builder(
+              key: gk,
               scrollDirection: Axis.vertical,
               padding: const EdgeInsets.all(3),
-              itemCount: widget.nameList.length + 1,
+              itemCount: widget.nameList.length + 1 + ((!isOver) ? 1 : 0),
               itemBuilder: (BuildContext context, int index) {
-                if(widget.nameList.length == index) {
+                if(widget.nameList.length + 1 == index) {
                   return Card(
+                    child: ListTile(
+                      title: Expanded(child: Padding(padding: const EdgeInsets.only(left: 10), child: getButton())),
+                    )
+                  );
+                } else if(widget.nameList.length == index) {
+                  return Card(
+                    key: gk3,
                     child: ListTile(
                       title: Expanded(child: Padding(padding: const EdgeInsets.only(left: 10), child: TextField(autofocus: true, controller: tc,))),
                     )
                   );
                 } else {
                   return Card(
+                    key: (index == 0) ? gk2 : null,
                     child: ListTile(
                       title: Expanded(child: Padding(padding: const EdgeInsets.only(left: 10), child: Text("${widget.nameList[index]}", style: const TextStyle(fontSize: 21)))),
                       trailing: IconButton(
@@ -53,6 +100,8 @@ class _FlushViewState extends State<FlushView> {
                             }
 
                             widget.nameList.removeAt(index);
+
+                            isOver = checkSize();
                           });
                         },
                         icon: const Icon(Icons.delete_forever, color: Colors.red,)
@@ -63,20 +112,13 @@ class _FlushViewState extends State<FlushView> {
               }
             )
           ),
-          OutlinedButton.icon(
-            onPressed: () {
-              setState(() {
-                if(!widget.nameList.contains(tc.text)) {
-                  if(!tc.text.isEmpty) {
-                    widget.nameList.add(tc.text);
-                    tc.clear();
-                  }
-                }
-              });
-            },
-            icon: const Icon(Icons.add),
-            label: const Text("Add")
+
+          if(isOver) Card(
+            child: ListTile(
+              title: Expanded(child: Padding(padding: const EdgeInsets.only(left: 10), child: getButton())),
+            )
           ),
+          
           Row(
             children: [
               Expanded(
