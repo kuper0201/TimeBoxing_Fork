@@ -15,7 +15,7 @@ class _FlushViewState extends State<FlushView> {
 
   @override
   Widget build(BuildContext context) {
-return Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: const Text("Step 1: Flush"),
         centerTitle: true,
