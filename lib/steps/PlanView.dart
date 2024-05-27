@@ -79,17 +79,19 @@ class _PlanViewState extends State<PlanView> {
                                         setState(() {
                                           startTime[name] = selectedTime;
 
-                                          if(endTime.containsKey(name)) {
-                                            Meeting item = Meeting(name, startTime[name]!, endTime[name]!, colors[random.nextInt(colors.length)], false);
-                                            if(lst.contains(item)) {
-                                              lst.remove(item);
-                                            }
-                                            lst.add(item);
+                                          if(!endTime.containsKey(name)) {
+                                            endTime[name] = selectedTime.add(const Duration(hours: 1));
                                           }
+
+                                          Meeting item = Meeting(name, startTime[name]!, endTime[name]!, colors[random.nextInt(colors.length)], false);
+                                          if(lst.contains(item)) {
+                                            lst.remove(item);
+                                          }
+                                          lst.add(item);
                                         });
                                       }
                                     },
-                                    child: startTime.containsKey(widget.nameList[index]) ? Text("${startTime[widget.nameList[index]]!.hour} : ${startTime[widget.nameList[index]]!.minute}") : const Text("시작 시간")
+                                    child: startTime.containsKey(widget.nameList[index]) ? Text("${startTime[widget.nameList[index]]!.hour.toString().padLeft(2, '0')} : ${startTime[widget.nameList[index]]!.minute.toString().padLeft(2, '0')}") : const Text("시작 시간")
                                   )
                                 ),
                                 Expanded(
@@ -103,17 +105,19 @@ class _PlanViewState extends State<PlanView> {
                                         setState(() {
                                           endTime[name] = selectedTime;
 
-                                          if(startTime.containsKey(name)) {
-                                            Meeting item = Meeting(name, startTime[name]!, endTime[name]!, colors[random.nextInt(colors.length)], false);
-                                            if(lst.contains(item)) {
-                                              lst.remove(item);
-                                            }
-                                            lst.add(item);
+                                          if(!startTime.containsKey(name)) {
+                                            startTime[name] = selectedTime.subtract(const Duration(hours: 1));
                                           }
+                                          
+                                          Meeting item = Meeting(name, startTime[name]!, endTime[name]!, colors[random.nextInt(colors.length)], false);
+                                          if(lst.contains(item)) {
+                                            lst.remove(item);
+                                          }
+                                          lst.add(item);
                                         });
                                       }
                                     },
-                                    child: endTime.containsKey(widget.nameList[index]) ? Text("${endTime[widget.nameList[index]]!.hour} : ${endTime[widget.nameList[index]]!.minute}") : const Text("끝 시간")
+                                    child: endTime.containsKey(widget.nameList[index]) ? Text("${endTime[widget.nameList[index]]!.hour.toString().padLeft(2, '0')} : ${endTime[widget.nameList[index]]!.minute.toString().padLeft(2, '0')}") : const Text("끝 시간")
                                   )
                                 )
                               ],
