@@ -79,7 +79,7 @@ class _PlanViewState extends State<PlanView> {
                                         setState(() {
                                           startTime[name] = selectedTime;
 
-                                          if(!endTime.containsKey(name)) {
+                                          if(!endTime.containsKey(name) || endTime[name]!.isBefore(selectedTime)) {
                                             endTime[name] = selectedTime.add(const Duration(hours: 1));
                                           }
 
@@ -105,7 +105,7 @@ class _PlanViewState extends State<PlanView> {
                                         setState(() {
                                           endTime[name] = selectedTime;
 
-                                          if(!startTime.containsKey(name)) {
+                                          if(!startTime.containsKey(name) || selectedTime.isBefore(startTime[name]!)) {
                                             startTime[name] = selectedTime.subtract(const Duration(hours: 1));
                                           }
                                           
