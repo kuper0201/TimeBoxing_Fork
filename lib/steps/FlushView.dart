@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class FlushView extends StatefulWidget {
   final List<String> nameList;
@@ -17,6 +18,7 @@ class _FlushViewState extends State<FlushView> {
   bool isOver = false;
 
   TextEditingController tc = TextEditingController();
+  FocusNode fn = FocusNode();
 
   bool checkSize() {
     final rb1 = gk.currentContext!.findRenderObject() as RenderBox;
@@ -41,9 +43,11 @@ class _FlushViewState extends State<FlushView> {
             isOver = checkSize();
           }
         });
+
+        FocusScope.of(context).requestFocus(fn);
       },
       icon: const Icon(Icons.add),
-      label: const Text("Add")
+      label: const Text("추가")
     );
   }
 
@@ -80,7 +84,7 @@ class _FlushViewState extends State<FlushView> {
                   return Card(
                     key: gk3,
                     child: ListTile(
-                      title: Expanded(child: Padding(padding: const EdgeInsets.only(left: 10), child: TextField(autofocus: true, controller: tc,))),
+                      title: Expanded(child: Padding(padding: const EdgeInsets.only(left: 10), child: TextField(autofocus: true, controller: tc, focusNode: fn,))),
                     )
                   );
                 } else {
