@@ -67,8 +67,10 @@ class _FlushViewState extends State<FlushView> {
             onPressed: () {
               setState(() {
                 if(!widget.nameList.contains(tc.text)) {
-                  widget.nameList.add(tc.text);
-                  tc.clear();
+                  if(!tc.text.isEmpty) {
+                    widget.nameList.add(tc.text);
+                    tc.clear();
+                  }
                 }
               });
             },
