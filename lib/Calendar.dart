@@ -21,7 +21,7 @@ class _CalendarViewState extends State<CalendarView> {
     DateTime.now().day,
   );
 
-  DateTime focusedDay = DateTime.now();
+  // DateTime focusedDay = DateTime.now();
   
   // @override
   // void didChangeDependencies() {
@@ -41,17 +41,32 @@ class _CalendarViewState extends State<CalendarView> {
             showNavigationArrow: true,
             todayHighlightColor: Colors.red,
           ),
-          Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(), 
-                                        onPressed:(){
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => const FlushView(),));
-                                        },
-                                        child: Text("flush"))),
-          Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(),
-                                        onPressed:(){Navigator.push(context, MaterialPageRoute(builder: (context) => PriorityView()));},
-                                        child: Text("pri"))),
-          Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(), 
-                                        onPressed:(){Navigator.push(context, MaterialPageRoute(builder: (context) => PlanView()));},
-                                        child: Text("planning")))
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(), 
+              onPressed:(){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const FlushView(),));
+              },
+              child: Text("flush")
+            )
+          ),
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(),
+              onPressed:(){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => PriorityView()));
+                },
+              child: Text("pri")
+            )
+          ),
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(),
+              onPressed:(){Navigator.push(context, MaterialPageRoute(builder: (context) => PlanView()));
+              },
+              child: Text("planning")
+            )
+          )
         ]
       )
     );
