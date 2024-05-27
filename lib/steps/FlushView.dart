@@ -1,14 +1,10 @@
-import 'dart:ffi';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class FlushView extends StatefulWidget {
   final List<String> nameList;
   final List<String> priority;
   final PageController pc;
-  const FlushView({Key? key, required this.nameList, required this.priority, required this.pc}) : super(key: key);
+  const FlushView({super.key, required this.nameList, required this.priority, required this.pc});
 
   @override
   _FlushViewState createState() => _FlushViewState();
@@ -91,7 +87,7 @@ class _FlushViewState extends State<FlushView> {
                   return Card(
                     key: (index == 0) ? gk2 : null,
                     child: ListTile(
-                      title: Expanded(child: Padding(padding: const EdgeInsets.only(left: 10), child: Text("${widget.nameList[index]}", style: const TextStyle(fontSize: 21)))),
+                      title: Expanded(child: Padding(padding: const EdgeInsets.only(left: 10), child: Text(widget.nameList[index], style: const TextStyle(fontSize: 21)))),
                       trailing: IconButton(
                         onPressed: () {
                           setState(() {

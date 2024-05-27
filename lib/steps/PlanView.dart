@@ -10,7 +10,7 @@ import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' 
 class PlanView extends StatefulWidget {
   final List<String> nameList;
   final PageController pc;
-  const PlanView({Key? key, required this.nameList, required this.pc}) : super(key: key);
+  const PlanView({super.key, required this.nameList, required this.pc});
 
   @override
   _PlanViewState createState() => _PlanViewState();
@@ -63,7 +63,7 @@ class _PlanViewState extends State<PlanView> {
                     itemBuilder: (BuildContext context, int index) {
                       return Card(
                         child: ListTile(
-                          title: Expanded(flex:8, child: Padding(padding: const EdgeInsets.only(left: 10), child: Text("${widget.nameList[index]}", style: const TextStyle(fontSize: 21)))),
+                          title: Expanded(flex:8, child: Padding(padding: const EdgeInsets.only(left: 10), child: Text(widget.nameList[index], style: const TextStyle(fontSize: 21)))),
                           trailing: SizedBox(
                             width: 200,
                             child: Row(

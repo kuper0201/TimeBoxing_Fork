@@ -4,7 +4,7 @@ import 'package:time_boxing/steps/PlanView.dart';
 import 'package:time_boxing/steps/PriorityView.dart';
 
 class StepViewPage extends StatefulWidget {
-  const StepViewPage({Key? key}) : super(key: key);
+  const StepViewPage({super.key});
 
   @override
   _StepViewPageState createState() => _StepViewPageState();
