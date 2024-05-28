@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:time_boxing/steps/StepViewPage.dart';
+import 'package:time_boxing/home_steps/StepViewPage.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({Key? key}) : super(key: key);

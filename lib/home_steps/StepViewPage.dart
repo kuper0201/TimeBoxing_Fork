@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:time_boxing/steps/FlushView.dart';
-import 'package:time_boxing/steps/PlanView.dart';
-import 'package:time_boxing/steps/PriorityView.dart';
-import 'package:time_boxing/steps/data/PlanTime.dart';
+import 'package:time_boxing/home_steps/FlushView.dart';
+import 'package:time_boxing/home_steps/PlanView.dart';
+import 'package:time_boxing/home_steps/PriorityView.dart';
+import 'package:time_boxing/home_steps/data/PlanTime.dart';
 
 class StepViewPage extends StatefulWidget {
   const StepViewPage({super.key});

@@ -1,13 +1,12 @@
 import 'package:syncfusion_flutter_calendar/calendar.dart' as CV; // 캘린더
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/material.dart';
 
-import 'steps/FlushView.dart';
-import 'steps/PlanningView.dart';
-import 'steps/PriView.dart';
+import 'calendar_steps/FlushView.dart';
+import 'calendar_steps/PlanningView.dart';
+import 'calendar_steps/PriView.dart';
 
 class CalendarView extends StatefulWidget {
-  const CalendarView({Key? key}) : super(key: key);
+  const CalendarView({super.key});
 
   @override
   _CalendarViewState createState() => _CalendarViewState();
@@ -47,24 +46,24 @@ class _CalendarViewState extends State<CalendarView> {
               onPressed:(){
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const FlushView(),));
               },
-              child: Text("flush")
+              child: const Text("flush")
             )
           ),
           Expanded(
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(),
               onPressed:(){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => PriorityView()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const PriorityView()));
                 },
-              child: Text("pri")
+              child: const Text("pri")
             )
           ),
           Expanded(
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(),
-              onPressed:(){Navigator.push(context, MaterialPageRoute(builder: (context) => PlanView()));
+              onPressed:(){Navigator.push(context, MaterialPageRoute(builder: (context) => const PlanView()));
               },
-              child: Text("planning")
+              child: const Text("planning")
             )
           )
         ]
