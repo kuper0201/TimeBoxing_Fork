@@ -53,7 +53,7 @@ class _FlushViewState extends State<FlushView> {
       label: const Text("추가")
     );
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
