@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:time_boxing/DB/database.dart';
 import 'package:time_boxing/DB/repository.dart';
 
-class HomeView extends StatefulWidget {
-  const HomeView({Key? key}) : super(key: key);
+class testpage extends StatefulWidget {
+  const testpage({Key? key}) : super(key: key);
 
   @override
-  _HomeViewState createState() => _HomeViewState();
+  _testpage createState() => _testpage();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _testpage extends State<testpage> {
   TimeBoxingRepository repository = TimeBoxingRepository();
 
   @override

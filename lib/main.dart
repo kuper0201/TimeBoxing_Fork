@@ -3,7 +3,7 @@ import 'package:time_boxing/Calendar.dart';
 import 'package:time_boxing/History.dart';
 import 'package:time_boxing/Home.dart';
 import 'package:time_boxing/Setting.dart';
-import 'package:time_boxing/DB/testpage.dart';
+import 'package:time_boxing/DB/testpage2.dart';
 
 void main() {
   runApp(const MyApp());
@@ -35,7 +35,7 @@ class _MainViewState extends State<MainView> {
     CalendarView(),
     HistoryView(),
     SettingView(),
-    Testpage()
+    testpage()
   ];
  
   void _onItemTapped(int index) {
