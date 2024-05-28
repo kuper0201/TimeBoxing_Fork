@@ -27,7 +27,7 @@ class _HomeViewState extends State<HomeView> {
             child: const Center(
               child: Column(
                 children: [
-                  Expanded(child: Text("Add", style: TextStyle(fontSize: 28))),
+                  Expanded(child: Text("일정 추가", style: TextStyle(fontSize: 28))),
                   Expanded(child: Icon(Icons.add, size: 50,))
                 ]
               ),

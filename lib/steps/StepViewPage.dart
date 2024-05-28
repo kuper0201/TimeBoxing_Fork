@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:time_boxing/steps/FlushView.dart';
 import 'package:time_boxing/steps/PlanView.dart';
 import 'package:time_boxing/steps/PriorityView.dart';
+import 'package:time_boxing/steps/data/PlanTime.dart';
 
 class StepViewPage extends StatefulWidget {
   const StepViewPage({super.key});
@@ -15,6 +16,8 @@ class _StepViewPageState extends State<StepViewPage> {
   List<String> priority = [];
   Map<String, DateTime> startTime = {};
   Map<String, DateTime> endTime = {};
+  List<PlanTime> planList = [];
+
   TextEditingController tc = TextEditingController();
   PageController pc = PageController(initialPage: 0);
 
@@ -66,9 +69,9 @@ class _StepViewPageState extends State<StepViewPage> {
         }
       },
       children: [
-        FlushView(nameList: nameList, priority: priority, pc: pc),
+        FlushView(nameList: nameList, priority: priority, planList: planList, pc: pc),
         PriorityView(nameList: nameList, priority: priority, pc: pc),
-        PlanView(nameList: nameList, priority: priority, startTime: startTime, endTime: endTime, pc: pc)
+        PlanView(nameList: nameList, priority: priority, startTime: startTime, endTime: endTime, planList: planList, pc: pc)
       ],
     );
   }

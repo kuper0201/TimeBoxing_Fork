@@ -1,26 +1,28 @@
 import 'dart:math';
 
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:split_view/split_view.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as picker;
+import 'package:time_boxing/steps/data/PlanTime.dart';
+
+import 'data/PlanTimeDataSource.dart';
 
 class PlanView extends StatefulWidget {
   final List<String> nameList;
   final List<String> priority;
   final Map<String, DateTime> startTime;
   final Map<String, DateTime> endTime;
+  final List<PlanTime> planList;
   final PageController pc;
-  const PlanView({super.key, required this.nameList, required this.priority, required this.startTime, required this.endTime, required this.pc});
+  const PlanView({super.key, required this.nameList, required this.priority, required this.startTime, required this.endTime, required this.planList, required this.pc});
 
   @override
   _PlanViewState createState() => _PlanViewState();
 }
 
 class _PlanViewState extends State<PlanView> {
-  List<Meeting> lst = <Meeting>[];
   List<Color> colors = [Colors.lightBlue, Colors.lightGreen, Colors.orange, Colors.purple, Colors.pink, Colors.yellow, Colors.cyan];
   final random = Random();
 
@@ -66,7 +68,7 @@ class _PlanViewState extends State<PlanView> {
                   view: CalendarView.day,
                   headerHeight: 0,
                   viewHeaderHeight: 0,
-                  dataSource: MeetingDataSource(lst),
+                  dataSource: PlanTimeDataSource(widget.planList),
                   viewNavigationMode: ViewNavigationMode.none,
                 ),
                 Container(
@@ -76,11 +78,11 @@ class _PlanViewState extends State<PlanView> {
                   child: ListView.builder(
                     scrollDirection: Axis.vertical,
                     padding: const EdgeInsets.all(3),
-                    itemCount: checkPrioritySet(), // widget.nameList.length,
+                    itemCount: checkPrioritySet(),
                     itemBuilder: (BuildContext context, int index) {
                       return Card(
                         child: ListTile(
-                          title: Expanded(flex:8, child: Padding(padding: const EdgeInsets.only(left: 10), child: Text(widget.nameList[index], style: const TextStyle(fontSize: 21)))),
+                          title: Expanded(flex: 8, child: Padding(padding: const EdgeInsets.only(left: 10), child: Text(widget.nameList[index], style: const TextStyle(fontSize: 21)))),
                           trailing: SizedBox(
                             width: 200,
                             child: Row(
@@ -100,11 +102,11 @@ class _PlanViewState extends State<PlanView> {
                                             widget.endTime[name] = selectedTime.add(const Duration(hours: 1));
                                           }
 
-                                          Meeting item = Meeting(name, widget.startTime[name]!, widget.endTime[name]!, colors[random.nextInt(colors.length)], false);
-                                          if(lst.contains(item)) {
-                                            lst.remove(item);
+                                          PlanTime item = PlanTime(name, widget.startTime[name]!, widget.endTime[name]!, colors[random.nextInt(colors.length)], false);
+                                          if(widget.planList.contains(item)) {
+                                            widget.planList.remove(item);
                                           }
-                                          lst.add(item);
+                                          widget.planList.add(item);
                                         });
                                       }
                                     },
@@ -126,11 +128,11 @@ class _PlanViewState extends State<PlanView> {
                                             widget.startTime[name] = selectedTime.subtract(const Duration(hours: 1));
                                           }
                                           
-                                          Meeting item = Meeting(name, widget.startTime[name]!, widget.endTime[name]!, colors[random.nextInt(colors.length)], false);
-                                          if(lst.contains(item)) {
-                                            lst.remove(item);
+                                          PlanTime item = PlanTime(name, widget.startTime[name]!, widget.endTime[name]!, colors[random.nextInt(colors.length)], false);
+                                          if(widget.planList.contains(item)) {
+                                            widget.planList.remove(item);
                                           }
-                                          lst.add(item);
+                                          widget.planList.add(item);
                                         });
                                       }
                                     },
@@ -168,48 +170,4 @@ class _PlanViewState extends State<PlanView> {
       )
     );
   }
-}
-
-class MeetingDataSource extends CalendarDataSource {
-  MeetingDataSource(List<Meeting> source) {
-    appointments = source;
-  }
-
-  @override
-  DateTime getStartTime(int index) {
-    return appointments![index].from;
-  }
-
-  @override
-  DateTime getEndTime(int index) {
-    return appointments![index].to;
-  }
-
-  @override
-  String getSubject(int index) {
-    return appointments![index].eventName;
-  }
-
-  @override
-  Color getColor(int index) {
-    return appointments![index].background;
-  }
-
-  @override
-  bool isAllDay(int index) {
-    return appointments![index].isAllDay;
-  }
-}
-
-class Meeting extends Equatable {
-  Meeting(this.eventName, this.from, this.to, this.background, this.isAllDay);
-
-  String eventName;
-  DateTime from;
-  DateTime to;
-  Color background;
-  bool isAllDay;
-  
-  @override
-  List<Object?> get props => [eventName];
 }

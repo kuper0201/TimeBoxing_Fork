@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import 'data/PlanTime.dart';
+
 class FlushView extends StatefulWidget {
   final List<String> nameList;
   final List<String> priority;
+  final List<PlanTime> planList;
   final PageController pc;
-  const FlushView({super.key, required this.nameList, required this.priority, required this.pc});
+  const FlushView({super.key, required this.nameList, required this.priority, required this.planList, required this.pc});
 
   @override
   _FlushViewState createState() => _FlushViewState();
@@ -97,6 +100,11 @@ class _FlushViewState extends State<FlushView> {
                           setState(() {
                             if(widget.priority.contains(widget.nameList[index])) {
                               widget.priority.remove(widget.nameList[index]);
+                            }
+
+                            PlanTime item = PlanTime(widget.nameList[index], DateTime.now(), DateTime.now(), Colors.black, false);
+                            if(widget.planList.contains(item)) {
+                              widget.planList.remove(item);
                             }
 
                             widget.nameList.removeAt(index);
