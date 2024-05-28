@@ -9,23 +9,39 @@ import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' 
 
 class PlanView extends StatefulWidget {
   final List<String> nameList;
-  final PageController pc;
   final List<String> priority;
-  const PlanView({super.key, required this.nameList, required this.priority, required this.pc});
+  final Map<String, DateTime> startTime;
+  final Map<String, DateTime> endTime;
+  final PageController pc;
+  const PlanView({super.key, required this.nameList, required this.priority, required this.startTime, required this.endTime, required this.pc});
 
   @override
   _PlanViewState createState() => _PlanViewState();
 }
 
 class _PlanViewState extends State<PlanView> {
-  Map<String, DateTime> startTime = {};
-  Map<String, DateTime> endTime = {};
   List<Meeting> lst = <Meeting>[];
   List<Color> colors = [Colors.lightBlue, Colors.lightGreen, Colors.orange, Colors.purple, Colors.pink, Colors.yellow, Colors.cyan];
   final random = Random();
+
+  int checkPrioritySet() {
+    int idx = 1;
+    for(final p in widget.priority) {
+      if(!widget.startTime.containsKey(p) || !widget.endTime.containsKey(p)) return idx;
+      idx++;
+    }
+
+    return widget.nameList.length;
+  }
   
   @override
   Widget build(BuildContext context) {
+    for(final p in widget.priority) {
+      widget.nameList.remove(p);
+    }
+
+    widget.nameList.insertAll(0, widget.priority);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Step 3: Planning"),
@@ -60,7 +76,7 @@ class _PlanViewState extends State<PlanView> {
                   child: ListView.builder(
                     scrollDirection: Axis.vertical,
                     padding: const EdgeInsets.all(3),
-                    itemCount: widget.nameList.length,
+                    itemCount: checkPrioritySet(), // widget.nameList.length,
                     itemBuilder: (BuildContext context, int index) {
                       return Card(
                         child: ListTile(
@@ -74,17 +90,17 @@ class _PlanViewState extends State<PlanView> {
                                     onPressed:() async {
                                       String name = widget.nameList[index];
 
-                                      DateTime now = (startTime.containsKey(name)) ? startTime[name]! : DateTime.now();
+                                      DateTime now = (widget.startTime.containsKey(name)) ? widget.startTime[name]! : DateTime.now();
                                       DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now);
                                       if(selectedTime != null) {
                                         setState(() {
-                                          startTime[name] = selectedTime;
+                                          widget.startTime[name] = selectedTime;
 
-                                          if(!endTime.containsKey(name) || endTime[name]!.isBefore(selectedTime)) {
-                                            endTime[name] = selectedTime.add(const Duration(hours: 1));
+                                          if(!widget.endTime.containsKey(name) || widget.endTime[name]!.isBefore(selectedTime)) {
+                                            widget.endTime[name] = selectedTime.add(const Duration(hours: 1));
                                           }
 
-                                          Meeting item = Meeting(name, startTime[name]!, endTime[name]!, colors[random.nextInt(colors.length)], false);
+                                          Meeting item = Meeting(name, widget.startTime[name]!, widget.endTime[name]!, colors[random.nextInt(colors.length)], false);
                                           if(lst.contains(item)) {
                                             lst.remove(item);
                                           }
@@ -92,25 +108,25 @@ class _PlanViewState extends State<PlanView> {
                                         });
                                       }
                                     },
-                                    child: startTime.containsKey(widget.nameList[index]) ? Text("${startTime[widget.nameList[index]]!.hour.toString().padLeft(2, '0')} : ${startTime[widget.nameList[index]]!.minute.toString().padLeft(2, '0')}") : const Text("시작 시간")
+                                    child: widget.startTime.containsKey(widget.nameList[index]) ? Text("${widget.startTime[widget.nameList[index]]!.hour.toString().padLeft(2, '0')} : ${widget.startTime[widget.nameList[index]]!.minute.toString().padLeft(2, '0')}") : const Text("시작 시간")
                                   )
                                 ),
                                 Expanded(
                                   child: TextButton(
                                     onPressed:() async {
                                       String name = widget.nameList[index];
-                                      DateTime now = (endTime.containsKey(name)) ? endTime[name]! : DateTime.now();
+                                      DateTime now = (widget.endTime.containsKey(name)) ? widget.endTime[name]! : DateTime.now();
 
                                       DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now);
                                       if(selectedTime != null) {
                                         setState(() {
-                                          endTime[name] = selectedTime;
+                                          widget.endTime[name] = selectedTime;
 
-                                          if(!startTime.containsKey(name) || selectedTime.isBefore(startTime[name]!)) {
-                                            startTime[name] = selectedTime.subtract(const Duration(hours: 1));
+                                          if(!widget.startTime.containsKey(name) || selectedTime.isBefore(widget.startTime[name]!)) {
+                                            widget.startTime[name] = selectedTime.subtract(const Duration(hours: 1));
                                           }
                                           
-                                          Meeting item = Meeting(name, startTime[name]!, endTime[name]!, colors[random.nextInt(colors.length)], false);
+                                          Meeting item = Meeting(name, widget.startTime[name]!, widget.endTime[name]!, colors[random.nextInt(colors.length)], false);
                                           if(lst.contains(item)) {
                                             lst.remove(item);
                                           }
@@ -118,7 +134,7 @@ class _PlanViewState extends State<PlanView> {
                                         });
                                       }
                                     },
-                                    child: endTime.containsKey(widget.nameList[index]) ? Text("${endTime[widget.nameList[index]]!.hour.toString().padLeft(2, '0')} : ${endTime[widget.nameList[index]]!.minute.toString().padLeft(2, '0')}") : const Text("끝 시간")
+                                    child: widget.endTime.containsKey(widget.nameList[index]) ? Text("${widget.endTime[widget.nameList[index]]!.hour.toString().padLeft(2, '0')} : ${widget.endTime[widget.nameList[index]]!.minute.toString().padLeft(2, '0')}") : const Text("끝 시간")
                                   )
                                 )
                               ],

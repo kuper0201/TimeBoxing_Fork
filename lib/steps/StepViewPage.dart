@@ -13,6 +13,8 @@ class StepViewPage extends StatefulWidget {
 class _StepViewPageState extends State<StepViewPage> {
   List<String> nameList = [];
   List<String> priority = [];
+  Map<String, DateTime> startTime = {};
+  Map<String, DateTime> endTime = {};
   TextEditingController tc = TextEditingController();
   PageController pc = PageController(initialPage: 0);
 
@@ -66,7 +68,7 @@ class _StepViewPageState extends State<StepViewPage> {
       children: [
         FlushView(nameList: nameList, priority: priority, pc: pc),
         PriorityView(nameList: nameList, priority: priority, pc: pc),
-        PlanView(nameList: nameList, priority: priority, pc: pc)
+        PlanView(nameList: nameList, priority: priority, startTime: startTime, endTime: endTime, pc: pc)
       ],
     );
   }
