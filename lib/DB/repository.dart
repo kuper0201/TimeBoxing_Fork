@@ -53,11 +53,7 @@ class TimeBoxingRepository extends ChangeNotifier {
 
   // select ZandiInfo
   Future<List<ZandiInfoData>> selectZandi(DateTime date) {
-    final result = (_myDatabase.select(_myDatabase.zandiInfo)..where((t) =>
-    t.date.year.equals(date.year) &
-    t.date.month.equals(date.month) &
-    t.date.day.equals(date.day)
-    )).get();
+    final result = (_myDatabase.select(_myDatabase.zandiInfo)..where((t) => t.date.equals(date))).get();
     return result;
   }
 
