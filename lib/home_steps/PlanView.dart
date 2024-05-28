@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:split_view/split_view.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -23,8 +24,21 @@ class PlanView extends StatefulWidget {
 }
 
 class _PlanViewState extends State<PlanView> {
+  bool isDarkMode = false;
   List<Color> colors = [Colors.lightBlue, Colors.lightGreen, Colors.orange, Colors.purple, Colors.pink, Colors.yellow, Colors.cyan];
   final random = Random();
+
+  final darkTheme = const picker.DatePickerTheme(
+    headerColor: Colors.black87,
+    backgroundColor: Colors.black87,
+    itemStyle: TextStyle(
+      color: Colors.white,
+      fontWeight: FontWeight.bold,
+      fontSize: 18
+    ),
+    cancelStyle: TextStyle(color: Colors.white, fontSize: 16),
+    doneStyle: TextStyle(color: Colors.blue, fontSize: 16)
+  );
 
   int checkPrioritySet() {
     int idx = 1;
@@ -63,6 +77,8 @@ class _PlanViewState extends State<PlanView> {
             child: SplitView(
               viewMode: SplitViewMode.Vertical,
               indicator: const SplitIndicator(viewMode: SplitViewMode.Vertical),
+              gripColor: (isDarkMode) ? Colors.black12 : Colors.grey,
+              gripColorActive: (isDarkMode) ? Colors.black12 : Colors.grey,
               children: [
                 SfCalendar(
                   view: CalendarView.day,
@@ -72,8 +88,8 @@ class _PlanViewState extends State<PlanView> {
                   viewNavigationMode: ViewNavigationMode.none,
                 ),
                 Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.grey
+                  decoration: BoxDecoration(
+                    color: (isDarkMode) ? Colors.black12 : Colors.grey
                   ),
                   child: ListView.builder(
                     scrollDirection: Axis.vertical,
@@ -93,7 +109,7 @@ class _PlanViewState extends State<PlanView> {
                                       String name = widget.nameList[index];
 
                                       DateTime now = (widget.startTime.containsKey(name)) ? widget.startTime[name]! : DateTime.now();
-                                      DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now);
+                                      DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now, theme: (isDarkMode) ? darkTheme : null);
                                       if(selectedTime != null) {
                                         setState(() {
                                           widget.startTime[name] = selectedTime;
@@ -119,7 +135,7 @@ class _PlanViewState extends State<PlanView> {
                                       String name = widget.nameList[index];
                                       DateTime now = (widget.endTime.containsKey(name)) ? widget.endTime[name]! : DateTime.now();
 
-                                      DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now);
+                                      DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now, theme: (isDarkMode) ? darkTheme : null);
                                       if(selectedTime != null) {
                                         setState(() {
                                           widget.endTime[name] = selectedTime;
@@ -169,5 +185,12 @@ class _PlanViewState extends State<PlanView> {
         ]
       )
     );
+  }
+
+  @override
+  void initState() {
+    var brightness = SchedulerBinding.instance.platformDispatcher.platformBrightness;
+    isDarkMode = brightness == Brightness.dark;
+    super.initState();
   }
 }
