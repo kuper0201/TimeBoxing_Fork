@@ -66,7 +66,7 @@ class _StepViewPageState extends State<StepViewPage> {
       children: [
         FlushView(nameList: nameList, priority: priority, pc: pc),
         PriorityView(nameList: nameList, priority: priority, pc: pc),
-        PlanView(nameList: nameList, pc: pc)
+        PlanView(nameList: nameList, priority: priority, pc: pc)
       ],
     );
   }

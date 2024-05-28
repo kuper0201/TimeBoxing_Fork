@@ -10,7 +10,8 @@ import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' 
 class PlanView extends StatefulWidget {
   final List<String> nameList;
   final PageController pc;
-  const PlanView({super.key, required this.nameList, required this.pc});
+  final List<String> priority;
+  const PlanView({super.key, required this.nameList, required this.priority, required this.pc});
 
   @override
   _PlanViewState createState() => _PlanViewState();

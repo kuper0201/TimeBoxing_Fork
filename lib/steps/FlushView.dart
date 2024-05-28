@@ -84,7 +84,7 @@ class _FlushViewState extends State<FlushView> {
                   return Card(
                     key: gk3,
                     child: ListTile(
-                      title: Expanded(child: Padding(padding: const EdgeInsets.only(left: 10), child: TextField(autofocus: true, controller: tc, focusNode: fn,))),
+                      title: Expanded(child: Padding(padding: const EdgeInsets.only(left: 10), child: TextField(autofocus: true, controller: tc, decoration: const InputDecoration(hintText: "일정을 입력하세요"), focusNode: fn))),
                     )
                   );
                 } else {
