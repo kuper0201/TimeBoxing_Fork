@@ -13,9 +13,13 @@ class MyApp extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: "Time Boxing",
-      home: MainView()
+      theme: ThemeData(
+        primaryColor: Colors.white
+      ),
+      darkTheme: ThemeData.dark(),
+      home: const MainView()
     );
   }
 }
