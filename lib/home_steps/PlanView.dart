@@ -25,15 +25,42 @@ class PlanView extends StatefulWidget {
 class _PlanViewState extends State<PlanView> {
   List<Color> colors = [Colors.lightBlue, Colors.lightGreen, Colors.orange, Colors.purple, Colors.pink, Colors.yellow, Colors.cyan];
   final random = Random();
+  List<ExpansionTileController> expansionControllers = [];
+
+  int expansionIdx = 0;
 
   int checkPrioritySet() {
     int idx = 1;
     for(final p in widget.priority) {
-      if(!widget.startTime.containsKey(p) || !widget.endTime.containsKey(p)) return idx;
+      // if(!widget.startTime.containsKey(p) || !widget.endTime.containsKey(p)) {
+      PlanTime item = PlanTime(p, DateTime.now(), DateTime.now(), Colors.black, false);
+      if(!widget.planList.contains(item)) {
+        expansionIdx = idx;
+        return idx;
+      }
       idx++;
     }
 
+    expansionIdx = -1;
     return widget.nameList.length;
+  }
+
+  void appendPlan(String name) {
+    PlanTime item = PlanTime(name, widget.startTime[name]!, widget.endTime[name]!, colors[random.nextInt(colors.length)], false);
+    setState(() {
+      if(widget.planList.contains(item)) {
+        widget.planList.remove(item);
+      }
+      widget.planList.add(item);
+    });
+  }
+
+  @override
+  void initState() {
+    for(final s in widget.nameList) {
+      expansionControllers.add(ExpansionTileController());
+    }
+    super.initState();
   }
   
   @override
@@ -81,67 +108,79 @@ class _PlanViewState extends State<PlanView> {
                     itemCount: checkPrioritySet(),
                     itemBuilder: (BuildContext context, int index) {
                       return Card(
-                        child: ListTile(
+                        child: ExpansionTile(
+                          initiallyExpanded: true,
+                          shape: const Border(),
+                          controller: expansionControllers[index],
                           title: Expanded(flex: 8, child: Padding(padding: const EdgeInsets.only(left: 10), child: Text(widget.nameList[index], style: const TextStyle(fontSize: 21)))),
-                          trailing: SizedBox(
-                            width: 200,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: TextButton(
-                                    onPressed:() async {
-                                      String name = widget.nameList[index];
+                          children: [
+                            Padding(padding: const EdgeInsets.all(5),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextButton(
+                                        // style: TextButton.styleFrom(backgroundColor: Colors.lightGreen),
+                                        onPressed:() async {
+                                          String name = widget.nameList[index];
 
-                                      DateTime now = (widget.startTime.containsKey(name)) ? widget.startTime[name]! : DateTime.now();
-                                      DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now);
-                                      if(selectedTime != null) {
-                                        setState(() {
-                                          widget.startTime[name] = selectedTime;
+                                          DateTime now = (widget.startTime.containsKey(name)) ? widget.startTime[name]! : DateTime.now();
+                                          DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now);
+                                          if(selectedTime != null) {
+                                            setState(() {
+                                              widget.startTime[name] = selectedTime;
 
-                                          if(!widget.endTime.containsKey(name) || widget.endTime[name]!.isBefore(selectedTime)) {
-                                            widget.endTime[name] = selectedTime.add(const Duration(hours: 1));
+                                              if(!widget.endTime.containsKey(name) || widget.endTime[name]!.isBefore(selectedTime)) {
+                                                widget.endTime[name] = selectedTime.add(const Duration(hours: 1));
+                                              }
+
+                                              // appendPlan(name);
+                                            });
                                           }
+                                        },
+                                        child: widget.startTime.containsKey(widget.nameList[index]) ? Text("${widget.startTime[widget.nameList[index]]!.hour.toString().padLeft(2, '0')} : ${widget.startTime[widget.nameList[index]]!.minute.toString().padLeft(2, '0')}", style: const TextStyle(fontSize: 20),) : const Text("시작 시간", style: TextStyle(fontSize: 20))
+                                      )
+                                    ),
+                                    Expanded(
+                                      child: TextButton(
+                                        onPressed:() async {
+                                          String name = widget.nameList[index];
+                                          DateTime now = (widget.endTime.containsKey(name)) ? widget.endTime[name]! : DateTime.now();
 
-                                          PlanTime item = PlanTime(name, widget.startTime[name]!, widget.endTime[name]!, colors[random.nextInt(colors.length)], false);
-                                          if(widget.planList.contains(item)) {
-                                            widget.planList.remove(item);
-                                          }
-                                          widget.planList.add(item);
-                                        });
-                                      }
-                                    },
-                                    child: widget.startTime.containsKey(widget.nameList[index]) ? Text("${widget.startTime[widget.nameList[index]]!.hour.toString().padLeft(2, '0')} : ${widget.startTime[widget.nameList[index]]!.minute.toString().padLeft(2, '0')}") : const Text("시작 시간")
-                                  )
-                                ),
-                                Expanded(
-                                  child: TextButton(
-                                    onPressed:() async {
-                                      String name = widget.nameList[index];
-                                      DateTime now = (widget.endTime.containsKey(name)) ? widget.endTime[name]! : DateTime.now();
+                                          DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now);
+                                          if(selectedTime != null) {
+                                            setState(() {
+                                              widget.endTime[name] = selectedTime;
 
-                                      DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now);
-                                      if(selectedTime != null) {
-                                        setState(() {
-                                          widget.endTime[name] = selectedTime;
-
-                                          if(!widget.startTime.containsKey(name) || selectedTime.isBefore(widget.startTime[name]!)) {
-                                            widget.startTime[name] = selectedTime.subtract(const Duration(hours: 1));
+                                              if(!widget.startTime.containsKey(name) || selectedTime.isBefore(widget.startTime[name]!)) {
+                                                widget.startTime[name] = selectedTime.subtract(const Duration(hours: 1));
+                                              }
+                                              
+                                              // appendPlan(name);
+                                            });
                                           }
-                                          
-                                          PlanTime item = PlanTime(name, widget.startTime[name]!, widget.endTime[name]!, colors[random.nextInt(colors.length)], false);
-                                          if(widget.planList.contains(item)) {
-                                            widget.planList.remove(item);
+                                        },
+                                        child: widget.endTime.containsKey(widget.nameList[index]) ? Text("${widget.endTime[widget.nameList[index]]!.hour.toString().padLeft(2, '0')} : ${widget.endTime[widget.nameList[index]]!.minute.toString().padLeft(2, '0')}", style: const TextStyle(fontSize: 20)) : const Text("끝 시간", style: TextStyle(fontSize: 20))
+                                      )
+                                    ),
+                                    Expanded(
+                                      child: TextButton(
+                                        onPressed:() {
+                                          String name = widget.nameList[index];
+                                          if(widget.startTime.containsKey(name) && widget.endTime.containsKey(name)) {
+                                            appendPlan(name);
+                                            expansionControllers[index].collapse();
                                           }
-                                          widget.planList.add(item);
-                                        });
-                                      }
-                                    },
-                                    child: widget.endTime.containsKey(widget.nameList[index]) ? Text("${widget.endTime[widget.nameList[index]]!.hour.toString().padLeft(2, '0')} : ${widget.endTime[widget.nameList[index]]!.minute.toString().padLeft(2, '0')}") : const Text("끝 시간")
-                                  )
+                                        },
+                                        child: const Text("완료", style: TextStyle(fontSize: 20))
+                                      )
+                                    )
+                                  ],
                                 )
-                              ],
+                              )
                             )
-                          )
+                          ]
                         )
                       );
                     }
