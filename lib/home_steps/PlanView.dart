@@ -27,21 +27,15 @@ class _PlanViewState extends State<PlanView> {
   final random = Random();
   List<ExpansionTileController> expansionControllers = [];
 
-  int expansionIdx = 0;
-
   int checkPrioritySet() {
     int idx = 1;
     for(final p in widget.priority) {
       // if(!widget.startTime.containsKey(p) || !widget.endTime.containsKey(p)) {
       PlanTime item = PlanTime(p, DateTime.now(), DateTime.now(), Colors.black, false);
-      if(!widget.planList.contains(item)) {
-        expansionIdx = idx;
-        return idx;
-      }
+      if(!widget.planList.contains(item)) return idx;
       idx++;
     }
 
-    expansionIdx = -1;
     return widget.nameList.length;
   }
 
@@ -57,9 +51,7 @@ class _PlanViewState extends State<PlanView> {
 
   @override
   void initState() {
-    for(final s in widget.nameList) {
-      expansionControllers.add(ExpansionTileController());
-    }
+    expansionControllers = List<ExpansionTileController>.generate(widget.nameList.length, (index) => ExpansionTileController());
     super.initState();
   }
   
@@ -109,7 +101,7 @@ class _PlanViewState extends State<PlanView> {
                     itemBuilder: (BuildContext context, int index) {
                       return Card(
                         child: ExpansionTile(
-                          initiallyExpanded: true,
+                          initiallyExpanded: (widget.planList.contains(PlanTime(widget.nameList[index], DateTime.now(), DateTime.now(), Colors.black, false))) ? false : true,
                           shape: const Border(),
                           controller: expansionControllers[index],
                           title: Expanded(flex: 8, child: Padding(padding: const EdgeInsets.only(left: 10), child: Text(widget.nameList[index], style: const TextStyle(fontSize: 21)))),
