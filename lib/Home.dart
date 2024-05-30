@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:time_boxing/home_steps/PlanView.dart';
 import 'package:time_boxing/home_steps/StepViewPage.dart';
 
 class HomeView extends StatefulWidget {
@@ -10,7 +10,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  bool isValid = false;
+  bool isValid = true;
 
   Widget getMainWidget(BuildContext context) {
     // Todo - DB 쿼리 이용해 현재 시간 일정 존재 확인
@@ -20,7 +20,7 @@ class _HomeViewState extends State<HomeView> {
         children: [
           const SizedBox(
             width: double.infinity,
-            child: Padding(padding: EdgeInsets.only(left: 15), child: Text("현재 일정", style: TextStyle(fontSize: 25), textAlign: TextAlign.left)),
+            child: Padding(padding: EdgeInsets.only(left: 15, top: 15), child: Text("현재 일정", style: TextStyle(fontSize: 25), textAlign: TextAlign.left)),
           ),
           Card(
             child: ListTile(
@@ -56,36 +56,34 @@ class _HomeViewState extends State<HomeView> {
               )
             )
           ),
-          Card(
-            child: ListTile(
-              onTap: () {
-                
-              },
-              title: const Text("5678"),
-              subtitle: const Row(
-                children: [
-                  Text("15:00"),
-                  Text("     "),
-                  Text("18:00")
-                ],
-              )
-            )
+          Padding(
+            padding: const EdgeInsets.only(top: 3),
+            child: Card(
+              child: SizedBox(
+                height: 60,
+                width: double.infinity,
+                child: InkWell(
+                  onTap: () {
+                    // DB Query 후 PlanView에 넘겨 줄 것
+                    // Navigator.push(context, MaterialPageRoute(builder: (context) => const PlanView()));
+                  },
+                  child: const Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.edit),
+                        Text(
+                          "수정",
+                          style: TextStyle(fontSize: 18),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
-          Card(
-            child: ListTile(
-              onTap: () {
-                
-              },
-              title: const Text("5678"),
-              subtitle: const Row(
-                children: [
-                  Text("15:00"),
-                  Text("     "),
-                  Text("18:00")
-                ],
-              )
-            )
-          )
         ],
       );
     }
@@ -120,16 +118,16 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: (!isValid) ? null : AppBar(
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {
+      // appBar: (!isValid) ? null : AppBar(
+      //   actions: [
+      //     IconButton(
+      //       icon: const Icon(Icons.edit),
+      //       onPressed: () {
               
-            },
-          ),
-        ]
-      ),
+      //       },
+      //     ),
+      //   ]
+      // ),
       body: Center(
         child: getMainWidget(context)
       ),

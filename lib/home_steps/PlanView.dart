@@ -19,7 +19,7 @@ class PlanView extends StatefulWidget {
   const PlanView({super.key, required this.nameList, required this.priority, required this.startTime, required this.endTime, required this.planList, required this.pc});
 
   @override
-  _PlanViewState createState() => _PlanViewState();
+  State<PlanView> createState() => _PlanViewState();
 }
 
 class _PlanViewState extends State<PlanView> {
