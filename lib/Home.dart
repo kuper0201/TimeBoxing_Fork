@@ -19,19 +19,16 @@ class _HomeViewState extends State<HomeView> {
         children: [
           const SizedBox(
             width: double.infinity,
-            child: Padding(padding: EdgeInsets.only(left: 15, top: 15), child: Text("현재 일정", style: TextStyle(fontSize: 25), textAlign: TextAlign.left)),
+            child: Padding(padding: EdgeInsets.only(left: 15, top: 20), child: Text("현재 일정", style: TextStyle(fontSize: 25), textAlign: TextAlign.left)),
           ),
-          Card(
+          const Card(
             child: ListTile(
-              onTap: () {
-                
-              },
-              title: const Text("1234"),
-              subtitle: const Row(
+              title: Text("일정 이름(현재)", style: TextStyle(fontSize: 20)),
+              subtitle: Row(
                 children: [
-                  Text("12:00"),
+                  Text("12:00", style: TextStyle(fontSize: 18)),
                   Text("     "),
-                  Text("14:00")
+                  Text("15:00", style: TextStyle(fontSize: 18))
                 ],
               )
             )
@@ -40,23 +37,32 @@ class _HomeViewState extends State<HomeView> {
             width: double.infinity,
             child: Padding(padding: EdgeInsets.only(left: 15, top: 20), child: Text("다음 일정", style: TextStyle(fontSize: 25), textAlign: TextAlign.left)),
           ),
-          Card(
+          const Card(
             child: ListTile(
-              onTap: () {
-                
-              },
-              title: const Text("5678"),
-              subtitle: const Row(
+              title: Text("일정 이름(다음)", style: TextStyle(fontSize: 20)),
+              subtitle: Row(
                 children: [
-                  Text("15:00"),
+                  Text("15:00", style: TextStyle(fontSize: 18)),
                   Text("     "),
-                  Text("18:00")
+                  Text("18:00", style: TextStyle(fontSize: 18))
+                ],
+              )
+            )
+          ),
+          const Card(
+            child: ListTile(
+              title: Text("일정 이름(그 다음)", style: TextStyle(fontSize: 20)),
+              subtitle: Row(
+                children: [
+                  Text("18:00", style: TextStyle(fontSize: 18)),
+                  Text("     "),
+                  Text("21:00", style: TextStyle(fontSize: 18))
                 ],
               )
             )
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 3),
+            padding: const EdgeInsets.only(top: 5),
             child: Card(
               child: SizedBox(
                 height: 60,
