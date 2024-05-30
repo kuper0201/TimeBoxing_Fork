@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class HistoryView extends StatefulWidget {
-  const HistoryView({Key? key}) : super(key: key);
+  const HistoryView({super.key});
 
   @override
-  _HistoryViewState createState() => _HistoryViewState();
+  State<HistoryView> createState() => _HistoryViewState();
 }
 
 class _HistoryViewState extends State<HistoryView> {

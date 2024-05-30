@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:time_boxing/home_steps/PlanView.dart';
 import 'package:time_boxing/home_steps/StepViewPage.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
   @override
-  _HomeViewState createState() => _HomeViewState();
+  State<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
