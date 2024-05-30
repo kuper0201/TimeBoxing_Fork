@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class PlanView extends StatefulWidget {
-  const PlanView({Key? key}) : super(key: key);
+  const PlanView({super.key});
 
   @override
-  _PlanViewState createState() => _PlanViewState();
+  State<PlanView> createState() => _PlanViewState();
 }
 
 class _PlanViewState extends State<PlanView> {
@@ -16,7 +16,7 @@ class _PlanViewState extends State<PlanView> {
         centerTitle: true,
         backgroundColor: Colors.pink,
       ),
-      body: Column(
+      body: const Column(
         children: [
           
         ],

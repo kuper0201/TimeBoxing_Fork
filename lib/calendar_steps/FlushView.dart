@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class FlushView extends StatefulWidget {
-  const FlushView({Key? key}) : super(key: key);
+  const FlushView({super.key});
 
   @override
-  _FlushViewState createState() => _FlushViewState();
+  State<FlushView> createState() => _FlushViewState();
 }
 
 class _FlushViewState extends State<FlushView> {
@@ -31,20 +30,20 @@ class _FlushViewState extends State<FlushView> {
                 if(nameList.length == index) {
                   return Card(
                     child: ListTile(
-                      title: Expanded(child: Padding(padding: EdgeInsets.only(left: 10), child: TextField(autofocus: true, controller: tc,))),
+                      title: Expanded(child: Padding(padding: const EdgeInsets.only(left: 10), child: TextField(autofocus: true, controller: tc,))),
                     )
                   );
                 } else {
                   return Card(
                     child: ListTile(
-                      title: Expanded(child: Padding(padding: EdgeInsets.only(left: 10), child: Text("${nameList[index]}", style: const TextStyle(fontSize: 21)))),
+                      title: Expanded(child: Padding(padding: const EdgeInsets.only(left: 10), child: Text(nameList[index], style: const TextStyle(fontSize: 21)))),
                       trailing: IconButton(
                         onPressed: () {
                           setState(() {
                             nameList.removeAt(index);
                           });
                         },
-                        icon: Icon(Icons.delete_forever, color: Colors.red,)
+                        icon: const Icon(Icons.delete_forever, color: Colors.red,)
                       )
                     )
                   );
