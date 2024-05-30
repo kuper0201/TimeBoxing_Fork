@@ -11,10 +11,16 @@ class _MoreHistoryViewState extends State<MoreHistoryView> {
    @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-
-        ]
+      body: Center(
+        child:
+          Expanded(
+            child: ElevatedButton(
+              onPressed:(){
+                Navigator.popUntil(context, (route) => route.isFirst);
+              },
+              child: Text("back")
+            )
+          ) 
       )
     );
   }
