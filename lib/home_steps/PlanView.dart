@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:split_view/split_view.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -23,9 +24,12 @@ class PlanView extends StatefulWidget {
 }
 
 class _PlanViewState extends State<PlanView> {
+  GlobalKey gk = GlobalKey();
+  GlobalKey listGK = GlobalKey();
   List<Color> colors = [Colors.lightBlue, Colors.lightGreen, Colors.orange, Colors.purple, Colors.pink, Colors.yellow, Colors.cyan];
   final random = Random();
   List<ExpansionTileController> expansionControllers = [];
+  ScrollController scrollController = ScrollController();
 
   int checkPrioritySet() {
     int idx = 1;
@@ -91,15 +95,18 @@ class _PlanViewState extends State<PlanView> {
                   viewNavigationMode: ViewNavigationMode.none,
                 ),
                 Container(
+                  key: listGK,
                   decoration: const BoxDecoration(
                     color: Colors.grey
                   ),
                   child: ListView.builder(
                     scrollDirection: Axis.vertical,
+                    controller: scrollController,
                     padding: const EdgeInsets.all(3),
                     itemCount: checkPrioritySet(),
                     itemBuilder: (BuildContext context, int index) {
                       return Card(
+                        key: (index == 0) ? gk : null,
                         child: ExpansionTile(
                           initiallyExpanded: (widget.planList.contains(PlanTime(widget.nameList[index], DateTime.now(), DateTime.now(), Colors.black, false))) ? false : true,
                           shape: const Border(),
@@ -126,8 +133,6 @@ class _PlanViewState extends State<PlanView> {
                                               if(!widget.endTime.containsKey(name) || widget.endTime[name]!.isBefore(selectedTime)) {
                                                 widget.endTime[name] = selectedTime.add(const Duration(hours: 1));
                                               }
-
-                                              // appendPlan(name);
                                             });
                                           }
                                         },
@@ -148,8 +153,6 @@ class _PlanViewState extends State<PlanView> {
                                               if(!widget.startTime.containsKey(name) || selectedTime.isBefore(widget.startTime[name]!)) {
                                                 widget.startTime[name] = selectedTime.subtract(const Duration(hours: 1));
                                               }
-                                              
-                                              // appendPlan(name);
                                             });
                                           }
                                         },
@@ -163,6 +166,17 @@ class _PlanViewState extends State<PlanView> {
                                           if(widget.startTime.containsKey(name) && widget.endTime.containsKey(name)) {
                                             appendPlan(name);
                                             expansionControllers[index].collapse();
+                                            if(widget.startTime.length == 3 && widget.endTime.length == 3) {
+                                              RenderBox list_rb = listGK.currentContext!.findRenderObject() as RenderBox;
+                                              RenderBox rb = gk.currentContext!.findRenderObject() as RenderBox;
+
+                                              if(list_rb.size.height <= rb.size.height * 2 * (widget.nameList.length - 3)) {
+                                                scrollController.animateTo(rb.size.height * 3, duration: const Duration(microseconds: 500), curve: Curves.ease);
+                                              } else {
+                                                double move = scrollController.offset + (rb.size.height * 3 + rb.size.height * 2 * (widget.nameList.length - 3) - list_rb.size.height);
+                                                scrollController.animateTo(move, duration: const Duration(microseconds: 500), curve: Curves.ease);
+                                              }
+                                            }
                                           }
                                         },
                                         child: const Text("완료", style: TextStyle(fontSize: 20))

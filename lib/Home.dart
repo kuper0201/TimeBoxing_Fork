@@ -9,7 +9,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  bool isValid = true;
+  bool isValid = false;
 
   Widget getMainWidget(BuildContext context) {
     // Todo - DB 쿼리 이용해 현재 시간 일정 존재 확인
