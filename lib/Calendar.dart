@@ -1,13 +1,12 @@
-import 'package:syncfusion_flutter_calendar/calendar.dart' as CV; // sfcalendar lib
-import 'package:intl/date_symbol_data_local.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart' as CV; // 캘린더
 import 'package:flutter/material.dart';
 
-import 'steps/FlushView.dart';
-import 'steps/PlanningView.dart';
-import 'steps/PriView.dart';
+import 'calendar_steps/FlushView.dart';
+import 'calendar_steps/PlanningView.dart';
+import 'calendar_steps/PriView.dart';
 
 class CalendarView extends StatefulWidget {
-  const CalendarView({Key? key}) : super(key: key);
+  const CalendarView({super.key});
 
   @override
   _CalendarViewState createState() => _CalendarViewState();
@@ -21,7 +20,7 @@ class _CalendarViewState extends State<CalendarView> {
     DateTime.now().day,
   );
 
-  DateTime focusedDay = DateTime.now();
+  // DateTime focusedDay = DateTime.now();
   
   // @override
   // void didChangeDependencies() {
@@ -37,21 +36,36 @@ class _CalendarViewState extends State<CalendarView> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           CV.SfCalendar(
-            view: CV.CalendarView.month ,
+            view: CV.CalendarView.month,
             showNavigationArrow: true,
-            todayHighlightColor: Colors.red
+            todayHighlightColor: Colors.red,
           ),
-          Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(), 
-                                        onPressed:(){
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => const FlushView(),));
-                                        },
-                                        child: Text("flush"))),
-          Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(),
-                                        onPressed:(){Navigator.push(context, MaterialPageRoute(builder: (context) => PriorityView()));},
-                                        child: Text("pri"))),
-          Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(), 
-                                        onPressed:(){Navigator.push(context, MaterialPageRoute(builder: (context) => PlanView()));},
-                                        child: Text("planning")))
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(), 
+              onPressed:(){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const FlushView(),));
+              },
+              child: const Text("flush")
+            )
+          ),
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(),
+              onPressed:(){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const PriorityView()));
+                },
+              child: const Text("pri")
+            )
+          ),
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(),
+              onPressed:(){Navigator.push(context, MaterialPageRoute(builder: (context) => const PlanView()));
+              },
+              child: const Text("planning")
+            )
+          )
         ]
       )
     );
