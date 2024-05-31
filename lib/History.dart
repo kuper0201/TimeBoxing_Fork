@@ -79,8 +79,9 @@ class _HistoryViewState extends State<HistoryView> {
       body: Column(
           children: [
             Container(width: double.infinity, child: Text("연속$stack일 진행중입니다")),
-            Container(padding: EdgeInsets.all(10), child: CustomTable()),
-            Container(width: double.infinity, child: Text("최대스택: $maxStack")),
+            Container(width: double.infinity, padding: EdgeInsets.only(left: 5+MediaQuery.of(context).size.width/20,top:10), child: Text(style: TextStyle(fontSize: MediaQuery.of(context).size.width*0.3/15),"Today")),
+            Container(padding: EdgeInsets.only(left:10,right: 10), child: CustomTable()),
+            Container(padding: EdgeInsets.only(top: 10), width: double.infinity, child: Text("최대스택: $maxStack")),
             TextButton(onPressed:(){  Navigator.push(context, MaterialPageRoute(builder: (context) => const MoreHistoryView(),));}, child: Text("더보기")),
             Container(padding: EdgeInsets.only(top:50), child: Image.asset('assets/images/crown.png',height: 128,width: 128))
           ],
