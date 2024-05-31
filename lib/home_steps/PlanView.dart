@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:split_view/split_view.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -19,21 +20,43 @@ class PlanView extends StatefulWidget {
   const PlanView({super.key, required this.nameList, required this.priority, required this.startTime, required this.endTime, required this.planList, required this.pc});
 
   @override
-  _PlanViewState createState() => _PlanViewState();
+  State<PlanView> createState() => _PlanViewState();
 }
 
 class _PlanViewState extends State<PlanView> {
+  GlobalKey gk = GlobalKey();
+  GlobalKey listGK = GlobalKey();
   List<Color> colors = [Colors.lightBlue, Colors.lightGreen, Colors.orange, Colors.purple, Colors.pink, Colors.yellow, Colors.cyan];
   final random = Random();
+  List<ExpansionTileController> expansionControllers = [];
+  ScrollController scrollController = ScrollController();
 
   int checkPrioritySet() {
     int idx = 1;
     for(final p in widget.priority) {
-      if(!widget.startTime.containsKey(p) || !widget.endTime.containsKey(p)) return idx;
+      // if(!widget.startTime.containsKey(p) || !widget.endTime.containsKey(p)) {
+      PlanTime item = PlanTime(p, DateTime.now(), DateTime.now(), Colors.black, false);
+      if(!widget.planList.contains(item)) return idx;
       idx++;
     }
 
     return widget.nameList.length;
+  }
+
+  void appendPlan(String name) {
+    PlanTime item = PlanTime(name, widget.startTime[name]!, widget.endTime[name]!, colors[random.nextInt(colors.length)], false);
+    setState(() {
+      if(widget.planList.contains(item)) {
+        widget.planList.remove(item);
+      }
+      widget.planList.add(item);
+    });
+  }
+
+  @override
+  void initState() {
+    expansionControllers = List<ExpansionTileController>.generate(widget.nameList.length, (index) => ExpansionTileController());
+    super.initState();
   }
   
   @override
@@ -72,76 +95,98 @@ class _PlanViewState extends State<PlanView> {
                   viewNavigationMode: ViewNavigationMode.none,
                 ),
                 Container(
+                  key: listGK,
                   decoration: const BoxDecoration(
                     color: Colors.grey
                   ),
                   child: ListView.builder(
                     scrollDirection: Axis.vertical,
+                    controller: scrollController,
                     padding: const EdgeInsets.all(3),
                     itemCount: checkPrioritySet(),
                     itemBuilder: (BuildContext context, int index) {
                       return Card(
-                        child: ListTile(
+                        key: (index == 0) ? gk : null,
+                        child: ExpansionTile(
+                          initiallyExpanded: (widget.planList.contains(PlanTime(widget.nameList[index], DateTime.now(), DateTime.now(), Colors.black, false))) ? false : true,
+                          shape: const Border(),
+                          controller: expansionControllers[index],
                           title: Expanded(flex: 8, child: Padding(padding: const EdgeInsets.only(left: 10), child: Text(widget.nameList[index], style: const TextStyle(fontSize: 21)))),
-                          trailing: SizedBox(
-                            width: 200,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: TextButton(
-                                    onPressed:() async {
-                                      String name = widget.nameList[index];
+                          children: [
+                            Padding(padding: const EdgeInsets.all(5),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextButton(
+                                        // style: TextButton.styleFrom(backgroundColor: Colors.lightGreen),
+                                        onPressed:() async {
+                                          String name = widget.nameList[index];
 
-                                      DateTime now = (widget.startTime.containsKey(name)) ? widget.startTime[name]! : DateTime.now();
-                                      DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now);
-                                      if(selectedTime != null) {
-                                        setState(() {
-                                          widget.startTime[name] = selectedTime;
+                                          DateTime now = (widget.startTime.containsKey(name)) ? widget.startTime[name]! : DateTime.now();
+                                          DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now);
+                                          if(selectedTime != null) {
+                                            setState(() {
+                                              widget.startTime[name] = selectedTime;
 
-                                          if(!widget.endTime.containsKey(name) || widget.endTime[name]!.isBefore(selectedTime)) {
-                                            widget.endTime[name] = selectedTime.add(const Duration(hours: 1));
+                                              if(!widget.endTime.containsKey(name) || widget.endTime[name]!.isBefore(selectedTime)) {
+                                                widget.endTime[name] = selectedTime.add(const Duration(hours: 1));
+                                              }
+                                            });
                                           }
+                                        },
+                                        child: widget.startTime.containsKey(widget.nameList[index]) ? Text("${widget.startTime[widget.nameList[index]]!.hour.toString().padLeft(2, '0')} : ${widget.startTime[widget.nameList[index]]!.minute.toString().padLeft(2, '0')}", style: const TextStyle(fontSize: 20),) : const Text("시작 시간", style: TextStyle(fontSize: 20))
+                                      )
+                                    ),
+                                    Expanded(
+                                      child: TextButton(
+                                        onPressed:() async {
+                                          String name = widget.nameList[index];
+                                          DateTime now = (widget.endTime.containsKey(name)) ? widget.endTime[name]! : DateTime.now();
 
-                                          PlanTime item = PlanTime(name, widget.startTime[name]!, widget.endTime[name]!, colors[random.nextInt(colors.length)], false);
-                                          if(widget.planList.contains(item)) {
-                                            widget.planList.remove(item);
-                                          }
-                                          widget.planList.add(item);
-                                        });
-                                      }
-                                    },
-                                    child: widget.startTime.containsKey(widget.nameList[index]) ? Text("${widget.startTime[widget.nameList[index]]!.hour.toString().padLeft(2, '0')} : ${widget.startTime[widget.nameList[index]]!.minute.toString().padLeft(2, '0')}") : const Text("시작 시간")
-                                  )
-                                ),
-                                Expanded(
-                                  child: TextButton(
-                                    onPressed:() async {
-                                      String name = widget.nameList[index];
-                                      DateTime now = (widget.endTime.containsKey(name)) ? widget.endTime[name]! : DateTime.now();
+                                          DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now);
+                                          if(selectedTime != null) {
+                                            setState(() {
+                                              widget.endTime[name] = selectedTime;
 
-                                      DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now);
-                                      if(selectedTime != null) {
-                                        setState(() {
-                                          widget.endTime[name] = selectedTime;
+                                              if(!widget.startTime.containsKey(name) || selectedTime.isBefore(widget.startTime[name]!)) {
+                                                widget.startTime[name] = selectedTime.subtract(const Duration(hours: 1));
+                                              }
+                                            });
+                                          }
+                                        },
+                                        child: widget.endTime.containsKey(widget.nameList[index]) ? Text("${widget.endTime[widget.nameList[index]]!.hour.toString().padLeft(2, '0')} : ${widget.endTime[widget.nameList[index]]!.minute.toString().padLeft(2, '0')}", style: const TextStyle(fontSize: 20)) : const Text("끝 시간", style: TextStyle(fontSize: 20))
+                                      )
+                                    ),
+                                    Expanded(
+                                      child: TextButton(
+                                        onPressed:() {
+                                          String name = widget.nameList[index];
+                                          if(widget.startTime.containsKey(name) && widget.endTime.containsKey(name)) {
+                                            appendPlan(name);
+                                            expansionControllers[index].collapse();
+                                            if(widget.startTime.length == 3 && widget.endTime.length == 3) {
+                                              RenderBox list_rb = listGK.currentContext!.findRenderObject() as RenderBox;
+                                              RenderBox rb = gk.currentContext!.findRenderObject() as RenderBox;
 
-                                          if(!widget.startTime.containsKey(name) || selectedTime.isBefore(widget.startTime[name]!)) {
-                                            widget.startTime[name] = selectedTime.subtract(const Duration(hours: 1));
+                                              if(list_rb.size.height <= rb.size.height * 2 * (widget.nameList.length - 3)) {
+                                                scrollController.animateTo(rb.size.height * 3, duration: const Duration(microseconds: 500), curve: Curves.ease);
+                                              } else {
+                                                double move = scrollController.offset + (rb.size.height * 3 + rb.size.height * 2 * (widget.nameList.length - 3) - list_rb.size.height);
+                                                scrollController.animateTo(move, duration: const Duration(microseconds: 500), curve: Curves.ease);
+                                              }
+                                            }
                                           }
-                                          
-                                          PlanTime item = PlanTime(name, widget.startTime[name]!, widget.endTime[name]!, colors[random.nextInt(colors.length)], false);
-                                          if(widget.planList.contains(item)) {
-                                            widget.planList.remove(item);
-                                          }
-                                          widget.planList.add(item);
-                                        });
-                                      }
-                                    },
-                                    child: widget.endTime.containsKey(widget.nameList[index]) ? Text("${widget.endTime[widget.nameList[index]]!.hour.toString().padLeft(2, '0')} : ${widget.endTime[widget.nameList[index]]!.minute.toString().padLeft(2, '0')}") : const Text("끝 시간")
-                                  )
+                                        },
+                                        child: const Text("완료", style: TextStyle(fontSize: 20))
+                                      )
+                                    )
+                                  ],
                                 )
-                              ],
+                              )
                             )
-                          )
+                          ]
                         )
                       );
                     }

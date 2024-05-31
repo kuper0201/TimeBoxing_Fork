@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:time_boxing/MoreHistoryView.dart';
 
 class HistoryView extends StatefulWidget {
-  const HistoryView({Key? key}) : super(key: key);
+  const HistoryView({super.key});
+  
   @override
-  _HistoryViewState createState() => _HistoryViewState();
+  State<HistoryView> createState() => _HistoryViewState();
 }
 
 //더미데이터 형식(db연결후 지울것)

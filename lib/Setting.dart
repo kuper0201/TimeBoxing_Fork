@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class SettingView extends StatefulWidget {
-  const SettingView({Key? key}) : super(key: key);
+  const SettingView({super.key});
 
   @override
-  _SettingViewState createState() => _SettingViewState();
+  State<SettingView> createState() => _SettingViewState();
 }
 
 class _SettingViewState extends State<SettingView> {

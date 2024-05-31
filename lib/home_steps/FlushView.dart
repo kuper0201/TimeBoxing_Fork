@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import 'data/PlanTime.dart';
 
@@ -11,7 +10,7 @@ class FlushView extends StatefulWidget {
   const FlushView({super.key, required this.nameList, required this.priority, required this.planList, required this.pc});
 
   @override
-  _FlushViewState createState() => _FlushViewState();
+  State<FlushView> createState() => _FlushViewState();
 }
 
 class _FlushViewState extends State<FlushView> {

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class PriorityView extends StatefulWidget {
-  const PriorityView({Key? key}) : super(key: key);
+  const PriorityView({super.key});
 
   @override
-  _PriorityViewState createState() => _PriorityViewState();
+  State<PriorityView> createState() => _PriorityViewState();
 }
 
 class _PriorityViewState extends State<PriorityView> {
-  Map<String, int> priority = Map();
+  Map<String, int> priority = {};
   int currentPriority = 0;
 
   @override
@@ -30,7 +30,7 @@ class _PriorityViewState extends State<PriorityView> {
                   onTap: () {},
                   child: Card(
                     child: ListTile(
-                      trailing: Text("${index}")
+                      trailing: Text("$index")
                     )
                   )
                 );
