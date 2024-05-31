@@ -51,10 +51,12 @@ class CustomTable extends StatelessWidget { //db쿼리문 통해 35일전 date�
             int itemIndex = rowIndex * 7 + colIndex;
             // 리스트의 빈값에 false초기화
             bool item = itemIndex < items.length ? items[itemIndex] : false;
+            bool isFirstItem = itemIndex == 0;
             return Container(
               width: cellSize,
               height: screenHeight,
               alignment: Alignment.center,
+              color: isFirstItem ? Colors.yellow : Colors.white,
               child: Icon(
                 item ? Icons.check : Icons.close,
                 color: item ? Colors.green : Colors.red,
