@@ -26,11 +26,7 @@ class TimeBoxingRepository extends ChangeNotifier {
   
   // select TimeBoxingInfo
   Future<List<TimeBoxingInfoData>> selectTimeBoxing(DateTime date) {
-    final result = (_myDatabase.select(_myDatabase.timeBoxingInfo)..where((t) =>
-    t.date.year.equals(date.year) &
-    t.date.month.equals(date.month) &
-    t.date.day.equals(date.day)
-    )).get();
+    final result = (_myDatabase.select(_myDatabase.timeBoxingInfo)..where((t) => t.date.equals(date))).get();
     return result;
   }
 
