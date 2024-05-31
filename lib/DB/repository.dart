@@ -47,9 +47,16 @@ class TimeBoxingRepository extends ChangeNotifier {
       );
   }
 
-  // select ZandiInfo
-  Future<List<ZandiInfoData>> selectZandi(DateTime date) {
-    final result = (_myDatabase.select(_myDatabase.zandiInfo)..where((t) => t.date.equals(date))).get();
+  // select ZandiInfo get all
+  Future<List<ZandiInfoData>> selectZandiAll() {
+    final result = (_myDatabase.select(_myDatabase.zandiInfo)).get();
+    return result;
+  }
+
+  //select ZandiInfo 35days ago
+  //date값 넘겨줄때 flutter:math 사용하여 35일전 날짜로 변경하여 줄것
+  Future<List<ZandiInfoData>> selectZandi35DaysAgo(DateTime date) {
+    final result = (_myDatabase.select(_myDatabase.zandiInfo)..where((t) => t.date.isBiggerOrEqualValue(date))).get();
     return result;
   }
 
