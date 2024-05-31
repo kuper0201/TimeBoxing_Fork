@@ -60,4 +60,10 @@ class TimeBoxingRepository extends ChangeNotifier {
     return result;
   }
 
+  //select ZandiInfo max stack
+  Future<List<ZandiInfoData>> selectZandi35MaxStack() {
+    final result = (_myDatabase.select(_myDatabase.zandiInfo)..orderBy([(t) => OrderingTerm.desc(t.stack)])).get();
+    return result;
+  }
+
 }
