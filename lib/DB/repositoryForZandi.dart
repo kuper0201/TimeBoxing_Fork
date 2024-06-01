@@ -32,6 +32,12 @@ class RepositoryForZandi extends ChangeNotifier {
     return result;
   }
 
+  //select zandiInfo most late data
+  Future<List<ZandiInfoData>> selectMostLateData() {
+    final result = (_myDatabase.select(_myDatabase.zandiInfo)..orderBy([(t) => OrderingTerm.asc(t.date)])..limit(1)).get();
+    return result;
+  }  
+
   // select ZandiInfo get all
   Future<List<ZandiInfoData>> selectZandiAll() {
     final result = (_myDatabase.select(_myDatabase.zandiInfo)).get();
