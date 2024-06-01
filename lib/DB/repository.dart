@@ -1,7 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:time_boxing/DB/database.dart';
 import 'package:flutter/material.dart';
-import 'package:time_boxing/DB/models.dart';
 
 class TimeBoxingRepository extends ChangeNotifier {
   //field
@@ -62,7 +61,7 @@ class TimeBoxingRepository extends ChangeNotifier {
 
   //select ZandiInfo max stack
   Future<List<ZandiInfoData>> selectZandi35MaxStack() {
-    final result = (_myDatabase.select(_myDatabase.zandiInfo)..orderBy([(t) => OrderingTerm.desc(t.stack)])).get();
+    final result = (_myDatabase.select(_myDatabase.zandiInfo)..orderBy([(t) => OrderingTerm.desc(t.stack)])..limit(1)).get();
     return result;
   }
 
