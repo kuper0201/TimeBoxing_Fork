@@ -2,10 +2,8 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_week_view/flutter_week_view.dart';
 import 'package:split_view/split_view.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as picker;
 import 'package:time_boxing/home_steps/data/PlanTime.dart';
@@ -122,28 +120,28 @@ class _PlanViewState extends State<PlanView> {
                         event.end = event.start.add(Duration(hours: dur.hour, minutes: dur.minute));
                         widget.startTime[event.title] = event.start;
                         widget.endTime[event.title] = event.end;
-                        splitController.weights = splitWeights;
-
+                        
                         setState(() {
                           isMoving = false;
+                          splitController.weights = splitWeights;
                         });
                       },
                     ),
                     resizeEventOptions: ResizeEventOptions(
                       snapToGridGranularity: const Duration(minutes: 15),
                       onEventResizeMove: (event, newEndTime) {
-                        splitController.weights = [1.0, 0.0];
                         setState(() {
                           isMoving = true;
+                          splitController.weights = [1.0, 0.0];
                         });
                       },
                       onEventResized: (event, newEndTime) {
                         event.end = newEndTime;
                         widget.endTime[event.title] = event.end;
-                        splitController.weights = splitWeights;
-
+                        
                         setState(() {
                           isMoving = false;
+                          splitController.weights = splitWeights;
                         });
                       },
                     ),
