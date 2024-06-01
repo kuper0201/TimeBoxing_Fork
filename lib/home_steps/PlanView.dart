@@ -102,49 +102,54 @@ class _PlanViewState extends State<PlanView> {
                 }
               },
               children: [
-                DayView(
-                  userZoomable: false,
-                  events: widget.planList,
-                  date: DateTime.now(),
-                  style: const DayViewStyle(headerSize: 0),
-                  dragAndDropOptions: DragAndDropOptions(
-                    startingGesture: dg,
-                    onEventMove: (event, newStartTime) {
-                      setState(() {
-                        isMoving = true;
-                        splitController.weights = [1.0, 0.0];
-                      });
-                    },
-                    onEventDragged:(event, newStartTime) {
-                      final dur = event.end.subtract(Duration(hours: event.start.hour, minutes: event.start.minute));
-                      setState(() {
+                Container(
+                  child: DayView(
+                    userZoomable: false,
+                    events: widget.planList,
+                    date: DateTime.now(),
+                    style: const DayViewStyle(headerSize: 0),
+                    dragAndDropOptions: DragAndDropOptions(
+                      startingGesture: dg,
+                      onEventMove: (event, newStartTime) {
+                        setState(() {
+                          isMoving = true;
+                          splitController.weights = [1.0, 0.0];
+                        });
+                      },
+                      onEventDragged:(event, newStartTime) {
+                        final dur = event.end.subtract(Duration(hours: event.start.hour, minutes: event.start.minute));
                         event.start = newStartTime;
                         event.end = event.start.add(Duration(hours: dur.hour, minutes: dur.minute));
                         widget.startTime[event.title] = event.start;
                         widget.endTime[event.title] = event.end;
                         splitController.weights = splitWeights;
-                        isMoving = false;
-                      });
-                    },
-                  ),
-                  resizeEventOptions: ResizeEventOptions(
-                    snapToGridGranularity: const Duration(minutes: 15),
-                    onEventResizeMove: (event, newEndTime) {
-                      setState(() {
-                        isMoving = true;
+
+                        setState(() {
+                          isMoving = false;
+                        });
+                      },
+                    ),
+                    resizeEventOptions: ResizeEventOptions(
+                      snapToGridGranularity: const Duration(minutes: 15),
+                      onEventResizeMove: (event, newEndTime) {
                         splitController.weights = [1.0, 0.0];
-                      });
-                    },
-                    onEventResized: (event, newEndTime) {
-                      setState(() {
+                        setState(() {
+                          isMoving = true;
+                        });
+                      },
+                      onEventResized: (event, newEndTime) {
                         event.end = newEndTime;
                         widget.endTime[event.title] = event.end;
                         splitController.weights = splitWeights;
-                        isMoving = false;
-                      });
-                    },
+
+                        setState(() {
+                          isMoving = false;
+                        });
+                      },
+                    ),
                   ),
                 ),
+                
                 Container(
                   key: listGK,
                   decoration: const BoxDecoration(
@@ -159,7 +164,7 @@ class _PlanViewState extends State<PlanView> {
                       return Card(
                         key: (index == 0) ? gk : null,
                         child: ExpansionTile(
-                          initiallyExpanded: (widget.planList.contains(FlutterWeekViewEvent(title: widget.nameList[index], description: "", start: DateTime.now(), end: DateTime.now()))) ? false : true,
+                          initiallyExpanded: (widget.planList.contains(PlanTime(title: widget.nameList[index], description: "", start: DateTime.now(), end: DateTime.now()))) ? false : true,
                           shape: const Border(),
                           controller: expansionControllers[index],
                           title: Expanded(flex: 8, child: Padding(padding: const EdgeInsets.only(left: 10), child: Text(widget.nameList[index], style: const TextStyle(fontSize: 21)))),
@@ -171,7 +176,6 @@ class _PlanViewState extends State<PlanView> {
                                   children: [
                                     Expanded(
                                       child: TextButton(
-                                        // style: TextButton.styleFrom(backgroundColor: Colors.lightGreen),
                                         onPressed:() async {
                                           String name = widget.nameList[index];
 

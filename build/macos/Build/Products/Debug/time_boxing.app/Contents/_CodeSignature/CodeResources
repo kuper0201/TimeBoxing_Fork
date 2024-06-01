@@ -190,6 +190,33 @@
 			<key>requirement</key>
 			<string>cdhash H"3406aab10f486b91c2d9334de341504de56a5631" or cdhash H"73e04119822f2d8cd5eeb426ddac2b2b98295def"</string>
 		</dict>
+		<key>Frameworks/path_provider_foundation.framework</key>
+		<dict>
+			<key>cdhash</key>
+			<data>
+			dWEwHXN9cLOTGUIthQQLgMaFqXA=
+			</data>
+			<key>requirement</key>
+			<string>cdhash H"7561301d737d70b39319422d85040b80c685a970"</string>
+		</dict>
+		<key>Frameworks/sqlite3.framework</key>
+		<dict>
+			<key>cdhash</key>
+			<data>
+			nmo6kUCiuO543LBl0qjBZXTvWk0=
+			</data>
+			<key>requirement</key>
+			<string>cdhash H"9e6a3a9140a2b8ee78dcb065d2a8c16574ef5a4d"</string>
+		</dict>
+		<key>Frameworks/sqlite3_flutter_libs.framework</key>
+		<dict>
+			<key>cdhash</key>
+			<data>
+			cFouE7jOZr/t6JgpxE61URzF5fs=
+			</data>
+			<key>requirement</key>
+			<string>cdhash H"705a2e13b8ce66bfede89829c44eb5511cc5e5fb"</string>
+		</dict>
 		<key>Resources/AppIcon.icns</key>
 		<dict>
 			<key>hash2</key>
