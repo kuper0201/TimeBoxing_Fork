@@ -6,9 +6,10 @@ import 'package:time_boxing/MoreHistoryView.dart';
 import 'package:time_boxing/DB/repositoryForZandi.dart';
 
 class HistoryView extends StatefulWidget {
-  const HistoryView({Key? key}) : super(key: key);
+  const HistoryView({super.key});
+  
   @override
-  _HistoryViewState createState() => _HistoryViewState();
+  State<HistoryView> createState() => _HistoryViewState();
 }
 
 RepositoryForZandi repository = RepositoryForZandi();
