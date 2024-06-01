@@ -79,21 +79,21 @@ class _FlushViewState extends State<FlushView> {
                 if(widget.nameList.length + 1 == index) {
                   return Card(
                     child: ListTile(
-                      title: Expanded(child: Padding(padding: const EdgeInsets.only(left: 10), child: getButton())),
+                      title: Padding(padding: const EdgeInsets.only(left: 10), child: getButton()),
                     )
                   );
                 } else if(widget.nameList.length == index) {
                   return Card(
                     key: gk3,
                     child: ListTile(
-                      title: Expanded(child: Padding(padding: const EdgeInsets.only(left: 10), child: TextField(autofocus: true, controller: tc, decoration: const InputDecoration(hintText: "일정을 입력하세요"), focusNode: fn))),
+                      title: Padding(padding: const EdgeInsets.only(left: 10), child: TextField(autofocus: true, controller: tc, decoration: const InputDecoration(hintText: "일정을 입력하세요"), focusNode: fn)),
                     )
                   );
                 } else {
                   return Card(
                     key: (index == 0) ? gk2 : null,
                     child: ListTile(
-                      title: Expanded(child: Padding(padding: const EdgeInsets.only(left: 10), child: Text(widget.nameList[index], style: const TextStyle(fontSize: 21)))),
+                      title: Padding(padding: const EdgeInsets.only(left: 10), child: Text(widget.nameList[index], style: const TextStyle(fontSize: 21))),
                       trailing: IconButton(
                         onPressed: () {
                           setState(() {
@@ -122,7 +122,7 @@ class _FlushViewState extends State<FlushView> {
 
           if(isOver) Card(
             child: ListTile(
-              title: Expanded(child: Padding(padding: const EdgeInsets.only(left: 10), child: getButton())),
+              title: Padding(padding: const EdgeInsets.only(left: 10), child: getButton()),
             )
           ),
           

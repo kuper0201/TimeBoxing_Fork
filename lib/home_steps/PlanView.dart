@@ -165,7 +165,7 @@ class _PlanViewState extends State<PlanView> {
                           initiallyExpanded: (widget.planList.contains(PlanTime(title: widget.nameList[index], description: "", start: DateTime.now(), end: DateTime.now()))) ? false : true,
                           shape: const Border(),
                           controller: expansionControllers[index],
-                          title: Expanded(flex: 8, child: Padding(padding: const EdgeInsets.only(left: 10), child: Text(widget.nameList[index], style: const TextStyle(fontSize: 21)))),
+                          title: Padding(padding: const EdgeInsets.only(left: 10), child: Text(widget.nameList[index], style: const TextStyle(fontSize: 21))),
                           children: [
                             Padding(padding: const EdgeInsets.all(5),
                               child: SizedBox(
