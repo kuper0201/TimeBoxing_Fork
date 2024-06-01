@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'data/PlanTime.dart';
+import 'package:flutter_week_view/flutter_week_view.dart';
+import 'package:time_boxing/home_steps/data/PlanTime.dart';
 
 class FlushView extends StatefulWidget {
   final List<String> nameList;
@@ -101,7 +101,7 @@ class _FlushViewState extends State<FlushView> {
                               widget.priority.remove(widget.nameList[index]);
                             }
 
-                            PlanTime item = PlanTime(widget.nameList[index], DateTime.now(), DateTime.now(), Colors.black, false);
+                            PlanTime item = PlanTime(title: widget.nameList[index], description: "", start: DateTime.now(), end: DateTime.now());
                             if(widget.planList.contains(item)) {
                               widget.planList.remove(item);
                             }
