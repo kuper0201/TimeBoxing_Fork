@@ -24,7 +24,7 @@ class PlanView extends StatefulWidget {
 class _PlanViewState extends State<PlanView> {
   GlobalKey gk = GlobalKey();
   GlobalKey listGK = GlobalKey();
-  List<Color> colors = [Colors.lightBlue, Colors.lightGreen, Colors.orange, Colors.purple, Colors.pink, Colors.yellow, Colors.cyan];
+  List<Color> colors = [const Color.fromARGB(255, 171, 222, 230), const Color.fromARGB(255, 203, 170, 203), const Color.fromARGB(255, 255, 255, 181), Color.fromARGB(255, 255, 204, 182), Color.fromARGB(255, 243, 176, 195)];
   final random = Random();
   List<ExpansionTileController> expansionControllers = [];
   ScrollController scrollController = ScrollController();

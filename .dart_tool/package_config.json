@@ -177,7 +177,7 @@
     },
     {
       "name": "syncfusion_flutter_calendar",
-      "rootUri": "file:///Users/jeongjunsu/.pub-cache/hosted/pub.dev/syncfusion_flutter_calendar-25.2.6+1",
+      "rootUri": "file:///Users/jeongjunsu/.pub-cache/hosted/pub.dev/syncfusion_flutter_calendar-25.2.6",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
@@ -236,7 +236,7 @@
       "languageVersion": "3.3"
     }
   ],
-  "generated": "2024-06-01T08:47:22.731473Z",
+  "generated": "2024-06-01T11:56:20.641505Z",
   "generator": "pub",
   "generatorVersion": "3.4.1",
   "flutterRoot": "file:///Users/jeongjunsu/flutter",
