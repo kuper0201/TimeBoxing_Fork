@@ -9,7 +9,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
   
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
 }
  
 class MainView extends StatefulWidget {
-  const MainView({Key? key}) : super(key: key);
+  const MainView({super.key});
  
   @override
   State<MainView> createState() => _MainViewState();
@@ -30,10 +30,10 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   int _selectedIndex = 0;  
   final List<Widget> _widgetOptions = <Widget>[
-    HomeView(),
-    CalendarView(),
-    HistoryView(),
-    SettingView()
+    const HomeView(),
+    const CalendarView(),
+    const HistoryView(),
+    const SettingView()
   ];
  
   void _onItemTapped(int index) {
