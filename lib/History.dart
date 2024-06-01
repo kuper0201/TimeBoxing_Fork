@@ -3,7 +3,7 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:time_boxing/DB/database.dart';
 import 'package:time_boxing/MoreHistoryView.dart';
-import 'package:time_boxing/DB/repository.dart';
+import 'package:time_boxing/DB/repositoryForZandi.dart';
 
 class HistoryView extends StatefulWidget {
   const HistoryView({Key? key}) : super(key: key);
@@ -11,7 +11,7 @@ class HistoryView extends StatefulWidget {
   _HistoryViewState createState() => _HistoryViewState();
 }
 
-TimeBoxingRepository repository = TimeBoxingRepository();
+RepositoryForZandi repository = RepositoryForZandi();
 int CureentStack = 0;
 
 //get today

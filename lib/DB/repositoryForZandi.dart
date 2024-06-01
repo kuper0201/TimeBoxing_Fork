@@ -2,31 +2,18 @@ import 'package:drift/drift.dart';
 import 'package:time_boxing/DB/database.dart';
 import 'package:flutter/material.dart';
 
-class TimeBoxingRepository extends ChangeNotifier {
+class RepositoryForZandi extends ChangeNotifier {
   //field
 
   final Mydatabase _myDatabase;
 
   //Singleton
-  static final TimeBoxingRepository _timeBoxingRepository = TimeBoxingRepository._inner();
+  static final RepositoryForZandi _repositoryForZandi = RepositoryForZandi._inner();
 
-  TimeBoxingRepository._inner() : _myDatabase = Mydatabase();
+  RepositoryForZandi._inner() : _myDatabase = Mydatabase();
 
-  factory TimeBoxingRepository() {
-    return _timeBoxingRepository;
-  }
-
-
-  // TimeBoxingInfo insert
-  Future<int> insertTimeBoxing(DateTime date, String task, int priority, int startTime, int endTime) {
-    return _myDatabase.into(_myDatabase.timeBoxingInfo).insert(
-        TimeBoxingInfoCompanion.insert(date: date, task: task, priority: priority, startTime: startTime, endTime: endTime));
-  }
-  
-  // select TimeBoxingInfo
-  Future<List<TimeBoxingInfoData>> selectTimeBoxing(DateTime date) {
-    final result = (_myDatabase.select(_myDatabase.timeBoxingInfo)..where((t) => t.date.equals(date))).get();
-    return result;
+  factory RepositoryForZandi() {
+    return _repositoryForZandi;
   }
 
   // insert ZandiInfo FirstTime
@@ -34,16 +21,15 @@ class TimeBoxingRepository extends ChangeNotifier {
     return _myDatabase.into(_myDatabase.zandiInfo).insert(ZandiInfoCompanion.insert(date: date, stack: 0));
   }
 
-  // insert ZandiInfo increaseStack
-  Future<int> insertZandiInfo_increaseStack(DateTime date, int stack) {
-    return _myDatabase.into(_myDatabase.zandiInfo).insert(ZandiInfoCompanion.insert(date: date, stack: stack));
-  }
-
   // update ZandiInfo
   Future<int> updateZandiInfo(DateTime date, int stack) {
-    return (
-      _myDatabase.update(_myDatabase.zandiInfo)..where((t) => t.date.equals(date))).write(ZandiInfoCompanion(stack: Value(stack))
-      );
+    return (_myDatabase.update(_myDatabase.zandiInfo)..where((t) => t.date.equals(date))).write(ZandiInfoCompanion(date: Value(date), stack: Value(stack)));
+  }
+
+  //select ZandiInfo recent data
+  Future<List<ZandiInfoData>> selectRecentData() {
+    final result = (_myDatabase.select(_myDatabase.zandiInfo)..orderBy([(t) => OrderingTerm.desc(t.date)])..limit(1)).get();
+    return result;
   }
 
   // select ZandiInfo get all
