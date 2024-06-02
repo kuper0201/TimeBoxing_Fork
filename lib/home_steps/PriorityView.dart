@@ -7,7 +7,7 @@ class PriorityView extends StatefulWidget {
   const PriorityView({super.key, required this.nameList, required this.priority, required this.pc});
   
   @override
-  _PriorityViewState createState() => _PriorityViewState();
+  State<PriorityView> createState() => _PriorityViewState();
 }
 
 class _PriorityViewState extends State<PriorityView> {

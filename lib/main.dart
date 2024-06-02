@@ -9,7 +9,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
   
   @override
   Widget build(BuildContext context) {
@@ -67,6 +67,10 @@ class _MainViewState extends State<MainView> {
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
             label: 'Setting',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'testpage',
           ),
         ],
         type: BottomNavigationBarType.fixed,

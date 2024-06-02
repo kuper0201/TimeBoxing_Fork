@@ -8,7 +8,7 @@ class StepViewPage extends StatefulWidget {
   const StepViewPage({super.key});
 
   @override
-  _StepViewPageState createState() => _StepViewPageState();
+  State<StepViewPage> createState() => _StepViewPageState();
 }
 
 class _StepViewPageState extends State<StepViewPage> {
