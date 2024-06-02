@@ -24,10 +24,17 @@ environment:
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
 # consider running `flutter pub upgrade --major-versions`. Alternatively,
-# dependencies can be manually updated by changing the version numbers below to
+# dependencies can be manually supdated by changing the version numbers below to
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+
+#db dependencies
+  drift: ^2.18.0
+  sqlite3_flutter_libs: ^0.5.0
+  path_provider: ^2.0.0
+  path: ^1.9.0
+
   flutter:
     sdk: flutter
 
@@ -47,6 +54,11 @@ dependencies:
   equatable: ^2.0.5
 
 dev_dependencies:
+#db dependencies
+  drift_dev: ^2.18.0
+  build_runner: ^2.4.9
+
+
   flutter_test:
     sdk: flutter
 
@@ -99,3 +111,4 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
