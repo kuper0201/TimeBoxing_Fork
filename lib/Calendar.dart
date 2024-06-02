@@ -1,9 +1,16 @@
 import 'package:syncfusion_flutter_calendar/calendar.dart' as CV; // 캘린더
 import 'package:flutter/material.dart';
+import 'package:time_boxing/History.dart';
 
 import 'calendar_steps/FlushView.dart';
 import 'calendar_steps/PlanningView.dart';
 import 'calendar_steps/PriView.dart';
+
+//테스트용 코드 테스트 종료후 삭제해도됨
+import 'package:time_boxing/DB/repositoryForZandi.dart';
+
+RepositoryForZandi repistory = RepositoryForZandi();
+//테스트용 코드 테스트 종료후 삭제해도됨
 
 class CalendarView extends StatefulWidget {
   const CalendarView({super.key});
@@ -66,6 +73,17 @@ class _CalendarViewState extends State<CalendarView> {
               child: const Text("planning")
             )
           )
+          //테스트용 코드 테스트 종료후 삭제해도됨
+          ,
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(),
+              onPressed:(){reposiotry.insertZandiInfo_FirstTime(selectedDay);
+              },
+              child: const Text("zandi data insert")
+            )
+          )
+          //테스트용 코드 테스트 종료후 삭제해도됨
         ]
       )
     );

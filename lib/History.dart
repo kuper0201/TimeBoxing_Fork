@@ -12,9 +12,9 @@ class HistoryView extends StatefulWidget {
   State<HistoryView> createState() => _HistoryViewState();
 }
 
-RepositoryForZandi repository = RepositoryForZandi();
+RepositoryForZandi reposiotry = RepositoryForZandi();
 
-//set today
+//get today
 DateTime today = DateTime(
   DateTime.now().year,
   DateTime.now().month,
@@ -45,12 +45,13 @@ class ZandiInfoConvert {
 //연속일자 저장빈값
 int currentStack = 0;
 
+
 class CustomTable extends StatelessWidget { //db쿼리문 통해 35일전 date값 이후의 값만 불러올것
   @override
   Widget build(BuildContext context) {
     double cellSize = MediaQuery.of(context).size.width/10; // 칸의 크기를 화면 너비의 1/10로 설정
     double screenHeight = MediaQuery.of(context).size.height*0.3/5; 
-    
+
     //Boolean 리스트 생성
     List<ZandiInfoData> ZandiData = getZandi35Ago() as List<ZandiInfoData>;
 

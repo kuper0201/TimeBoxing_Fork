@@ -58,11 +58,22 @@ class CustomTable extends StatelessWidget {
         idx++;
       }
     }
+
+    //table row check
+    int tableRowCount = 0;
+
+    //true - 7의 배수 flase - 7의배수가 아님
+    if((maxStreakSize/7)%1 == 0) {
+      tableRowCount = maxStreakSize.floor();
+    } else {
+      tableRowCount = (tableRowCount/7).ceil();
+    }
+     
     
     //테이블 그리기
     return Table(
       border: TableBorder.all(),
-      children: List<TableRow>.generate(maxStreakSize~/7+1, (rowIndex) {
+      children: List<TableRow>.generate(tableRowCount, (rowIndex) {
         return TableRow(
           children: List<Widget>.generate(7, (colIndex) {
             int itemIndex = rowIndex * 7 + colIndex;

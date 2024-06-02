@@ -57,4 +57,8 @@ class RepositoryForZandi extends ChangeNotifier {
     return result;
   }
 
+  //테스트용 쿼리
+  
+  //테스트용 쿼리
+
 }

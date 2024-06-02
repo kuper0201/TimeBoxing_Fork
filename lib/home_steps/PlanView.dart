@@ -1,21 +1,20 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_week_view/flutter_week_view.dart';
 import 'package:split_view/split_view.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as picker;
 import 'package:time_boxing/home_steps/data/PlanTime.dart';
-
-import 'data/PlanTimeDataSource.dart';
 
 class PlanView extends StatefulWidget {
   final List<String> nameList;
   final List<String> priority;
   final Map<String, DateTime> startTime;
   final Map<String, DateTime> endTime;
-  final List<PlanTime> planList;
+  final List<FlutterWeekViewEvent> planList;
   final PageController pc;
   const PlanView({super.key, required this.nameList, required this.priority, required this.startTime, required this.endTime, required this.planList, required this.pc});
 
@@ -24,18 +23,39 @@ class PlanView extends StatefulWidget {
 }
 
 class _PlanViewState extends State<PlanView> {
+  bool isDarkMode = false;
+  
   GlobalKey gk = GlobalKey();
   GlobalKey listGK = GlobalKey();
-  List<Color> colors = [Colors.lightBlue, Colors.lightGreen, Colors.orange, Colors.purple, Colors.pink, Colors.yellow, Colors.cyan];
+
+  List<Color> colors = [const Color.fromARGB(255, 171, 222, 230), const Color.fromARGB(255, 203, 170, 203), const Color.fromARGB(255, 255, 255, 181), Color.fromARGB(255, 255, 204, 182), Color.fromARGB(255, 243, 176, 195)];
   final random = Random();
   List<ExpansionTileController> expansionControllers = [];
   ScrollController scrollController = ScrollController();
+  
+  List<double> splitWeights = [0.6, 0.4];
+  SplitViewController splitController = SplitViewController(weights: [0.6, 0.4]);
+  
+  bool isMoving = false;
+
+  DragStartingGesture dg = DragStartingGesture.longPress;
+
+  final darkTheme = const picker.DatePickerTheme(
+    headerColor: Colors.black87,
+    backgroundColor: Colors.black87,
+    itemStyle: TextStyle(
+      color: Colors.white,
+      fontWeight: FontWeight.bold,
+      fontSize: 18
+    ),
+    cancelStyle: TextStyle(color: Colors.white, fontSize: 16),
+    doneStyle: TextStyle(color: Colors.blue, fontSize: 16)
+  );
 
   int checkPrioritySet() {
     int idx = 1;
     for(final p in widget.priority) {
-      // if(!widget.startTime.containsKey(p) || !widget.endTime.containsKey(p)) {
-      PlanTime item = PlanTime(p, DateTime.now(), DateTime.now(), Colors.black, false);
+      PlanTime item = PlanTime(title: p, description: "", start: DateTime.now(), end: DateTime.now());
       if(!widget.planList.contains(item)) return idx;
       idx++;
     }
@@ -44,7 +64,7 @@ class _PlanViewState extends State<PlanView> {
   }
 
   void appendPlan(String name) {
-    PlanTime item = PlanTime(name, widget.startTime[name]!, widget.endTime[name]!, colors[random.nextInt(colors.length)], false);
+    PlanTime item = PlanTime(title: name, description: "", start: widget.startTime[name]!, end: widget.endTime[name]!, backgroundColor: colors[random.nextInt(colors.length)]);
     setState(() {
       if(widget.planList.contains(item)) {
         widget.planList.remove(item);
@@ -56,6 +76,12 @@ class _PlanViewState extends State<PlanView> {
   @override
   void initState() {
     expansionControllers = List<ExpansionTileController>.generate(widget.nameList.length, (index) => ExpansionTileController());
+    if(Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+      dg = DragStartingGesture.tap;
+    }
+
+    var brightness = SchedulerBinding.instance.platformDispatcher.platformBrightness;
+    isDarkMode = brightness == Brightness.dark;
     super.initState();
   }
   
@@ -84,20 +110,69 @@ class _PlanViewState extends State<PlanView> {
           Expanded(
             flex: 10,
             child: SplitView(
+              controller: splitController,
               viewMode: SplitViewMode.Vertical,
               indicator: const SplitIndicator(viewMode: SplitViewMode.Vertical),
+              onWeightChanged: (value) {
+                if(!isMoving) {
+                  splitWeights = List.of(value).map((d) => d!).toList();
+                }
+              },
+              gripColor: (isDarkMode) ? Colors.black12 : Colors.grey,
+              gripColorActive: (isDarkMode) ? Colors.black12 : Colors.grey,
               children: [
-                SfCalendar(
-                  view: CalendarView.day,
-                  headerHeight: 0,
-                  viewHeaderHeight: 0,
-                  dataSource: PlanTimeDataSource(widget.planList),
-                  viewNavigationMode: ViewNavigationMode.none,
+                Container(
+                  child: DayView(
+                    userZoomable: false,
+                    events: widget.planList,
+                    date: DateTime.now(),
+                    style: const DayViewStyle(headerSize: 0),
+                    dragAndDropOptions: DragAndDropOptions(
+                      startingGesture: dg,
+                      onEventMove: (event, newStartTime) {
+                        setState(() {
+                          isMoving = true;
+                          splitController.weights = [1.0, 0.0];
+                        });
+                      },
+                      onEventDragged:(event, newStartTime) {
+                        final dur = event.end.subtract(Duration(hours: event.start.hour, minutes: event.start.minute));
+                        event.start = newStartTime;
+                        event.end = event.start.add(Duration(hours: dur.hour, minutes: dur.minute));
+                        widget.startTime[event.title] = event.start;
+                        widget.endTime[event.title] = event.end;
+                        
+                        setState(() {
+                          isMoving = false;
+                          splitController.weights = splitWeights;
+                        });
+                      },
+                    ),
+                    resizeEventOptions: ResizeEventOptions(
+                      snapToGridGranularity: const Duration(minutes: 15),
+                      onEventResizeMove: (event, newEndTime) {
+                        setState(() {
+                          isMoving = true;
+                          splitController.weights = [1.0, 0.0];
+                        });
+                      },
+                      onEventResized: (event, newEndTime) {
+                        event.end = newEndTime;
+                        widget.endTime[event.title] = event.end;
+                        
+                        setState(() {
+                          isMoving = false;
+                          splitController.weights = splitWeights;
+                        });
+                      },
+                    ),
+                  ),
                 ),
+                
                 Container(
                   key: listGK,
-                  decoration: const BoxDecoration(
-                    color: Colors.grey
+                  decoration: BoxDecoration(
+                    color: (isDarkMode) ? Colors.black12 : Colors.grey
                   ),
                   child: ListView.builder(
                     scrollDirection: Axis.vertical,
@@ -108,10 +183,10 @@ class _PlanViewState extends State<PlanView> {
                       return Card(
                         key: (index == 0) ? gk : null,
                         child: ExpansionTile(
-                          initiallyExpanded: (widget.planList.contains(PlanTime(widget.nameList[index], DateTime.now(), DateTime.now(), Colors.black, false))) ? false : true,
+                          initiallyExpanded: (widget.planList.contains(PlanTime(title: widget.nameList[index], description: "", start: DateTime.now(), end: DateTime.now()))) ? false : true,
                           shape: const Border(),
                           controller: expansionControllers[index],
-                          title: Expanded(flex: 8, child: Padding(padding: const EdgeInsets.only(left: 10), child: Text(widget.nameList[index], style: const TextStyle(fontSize: 21)))),
+                          title: Padding(padding: const EdgeInsets.only(left: 10), child: Text(widget.nameList[index], style: const TextStyle(fontSize: 21))),
                           children: [
                             Padding(padding: const EdgeInsets.all(5),
                               child: SizedBox(
@@ -120,12 +195,11 @@ class _PlanViewState extends State<PlanView> {
                                   children: [
                                     Expanded(
                                       child: TextButton(
-                                        // style: TextButton.styleFrom(backgroundColor: Colors.lightGreen),
                                         onPressed:() async {
                                           String name = widget.nameList[index];
 
                                           DateTime now = (widget.startTime.containsKey(name)) ? widget.startTime[name]! : DateTime.now();
-                                          DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now);
+                                          DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now, theme: (isDarkMode) ? darkTheme : null);
                                           if(selectedTime != null) {
                                             setState(() {
                                               widget.startTime[name] = selectedTime;
@@ -145,7 +219,7 @@ class _PlanViewState extends State<PlanView> {
                                           String name = widget.nameList[index];
                                           DateTime now = (widget.endTime.containsKey(name)) ? widget.endTime[name]! : DateTime.now();
 
-                                          DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now);
+                                          DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now, theme: (isDarkMode) ? darkTheme : null);
                                           if(selectedTime != null) {
                                             setState(() {
                                               widget.endTime[name] = selectedTime;
@@ -167,13 +241,13 @@ class _PlanViewState extends State<PlanView> {
                                             appendPlan(name);
                                             expansionControllers[index].collapse();
                                             if(widget.startTime.length == 3 && widget.endTime.length == 3) {
-                                              RenderBox list_rb = listGK.currentContext!.findRenderObject() as RenderBox;
+                                              RenderBox listRB = listGK.currentContext!.findRenderObject() as RenderBox;
                                               RenderBox rb = gk.currentContext!.findRenderObject() as RenderBox;
 
-                                              if(list_rb.size.height <= rb.size.height * 2 * (widget.nameList.length - 3)) {
+                                              if(listRB.size.height <= rb.size.height * 2 * (widget.nameList.length - 3)) {
                                                 scrollController.animateTo(rb.size.height * 3, duration: const Duration(microseconds: 500), curve: Curves.ease);
                                               } else {
-                                                double move = scrollController.offset + (rb.size.height * 3 + rb.size.height * 2 * (widget.nameList.length - 3) - list_rb.size.height);
+                                                double move = scrollController.offset + (rb.size.height * 3 + rb.size.height * 2 * (widget.nameList.length - 3) - listRB.size.height);
                                                 scrollController.animateTo(move, duration: const Duration(microseconds: 500), curve: Curves.ease);
                                               }
                                             }
