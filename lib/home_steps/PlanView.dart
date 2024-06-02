@@ -7,6 +7,7 @@ import 'package:flutter_week_view/flutter_week_view.dart';
 import 'package:split_view/split_view.dart';
 
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as picker;
+import 'package:time_boxing/DB/repositoryForTimeBoxing.dart';
 import 'package:time_boxing/home_steps/data/PlanTime.dart';
 
 class PlanView extends StatefulWidget {
@@ -14,7 +15,7 @@ class PlanView extends StatefulWidget {
   final List<String> priority;
   final Map<String, DateTime> startTime;
   final Map<String, DateTime> endTime;
-  final List<FlutterWeekViewEvent> planList;
+  final List<PlanTime> planList;
   final PageController pc;
   const PlanView({super.key, required this.nameList, required this.priority, required this.startTime, required this.endTime, required this.planList, required this.pc});
 
@@ -277,6 +278,14 @@ class _PlanViewState extends State<PlanView> {
               child: OutlinedButton(
                 onPressed: () {
                   // DB 저장
+
+                  TimeBoxingRepository tr = TimeBoxingRepository();
+                  DateTime now = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+                  for(final item in widget.planList) {
+                    int st = item.start.hour * 60 + item.start.minute;
+                    int end = item.end.hour * 60 + item.end.minute;
+                    tr.insertTimeBoxing(now, item.title, widget.priority.indexOf(item.title), st, end);
+                  }
 
                   // 초기화면으로 돌아감
                   Navigator.popUntil(context, (route) => route.isFirst);

@@ -29,4 +29,8 @@ class TimeBoxingRepository extends ChangeNotifier {
     return result;
   }
 
+  // TimeBoxingInfo DB Stream
+  Stream<List<TimeBoxingInfoData>> getTimeBoxingStream() {
+    return _myDatabase.select(_myDatabase.timeBoxingInfo).watch();
+  }
 }
