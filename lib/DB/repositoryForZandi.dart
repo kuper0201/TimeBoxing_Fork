@@ -21,6 +21,11 @@ class RepositoryForZandi extends ChangeNotifier {
     return _myDatabase.into(_myDatabase.zandiInfo).insert(ZandiInfoCompanion.insert(date: date, stack: 0));
   }
 
+  // insert ZandiInfo stack연속이 끊킬경우 해당 방법으로 insert
+  Future<int> insertZaniInfo(DateTime date) {
+    return _myDatabase.into(_myDatabase.zandiInfo).insert(ZandiInfoCompanion.insert(date: date, stack: 1));
+  }
+
   // update ZandiInfo
   Future<int> updateZandiInfo(DateTime date, int stack) {
     return (_myDatabase.update(_myDatabase.zandiInfo)..where((t) => t.date.equals(date))).write(ZandiInfoCompanion(date: Value(date), stack: Value(stack)));
@@ -58,7 +63,9 @@ class RepositoryForZandi extends ChangeNotifier {
   }
 
   //테스트용 쿼리
-  
+  Future<int> insertZandiDummyData(DateTime date, int stack) {
+    return _myDatabase.into(_myDatabase.zandiInfo).insert(ZandiInfoCompanion.insert(date: date, stack: stack));
+  }
   //테스트용 쿼리
 
 }
