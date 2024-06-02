@@ -26,21 +26,21 @@ class CustomTable extends StatelessWidget { //db쿼리문 통해 35일전 date�
 
     //Boolean 리스트 생성
     List<Dummy> dummy = [Dummy(date: 2,stack: 2),Dummy(date: 6, stack: 2),Dummy(date: 12, stack: 5),Dummy(date: 40, stack: 20)];
-    List<bool> items = [];
-    for(int i=dummy.length-1; i>0; i--){
-      for(int j=0; j<dummy[i].stack; j++){
-        items.add(true);
+    dummy = dummy.reversed.toList();
+
+    int today = 40;
+    int maxStreakSize = 35;
+    List<Dummy> converted = dummy.map((d) => Dummy(date: today - d.date, stack: d.stack)).toList();
+    List<bool> items = List.generate(maxStreakSize, (idx) => false);
+
+    int idx = 0;
+    label : for(final d in converted) {
+      idx = d.date;
+      for(int i = 0; i < d.stack; i++) {
+        if(idx >= maxStreakSize) break label;
+        items[idx] = true;
+        idx++;
       }
-      for(int j=0; j<(dummy[i].date-dummy[i].stack)-(dummy[i-1].date); j++){
-        items.add(false);
-      }
-    }
-    for(int i=0; i<dummy[0].stack; i++){
-      items.add(true);
-    }
-    //리스트크기 35개로 자르기
-    if (items.length > 35) {
-      items = items.sublist(0, 35);
     }
     
     //테이블 그리기
@@ -80,8 +80,9 @@ class _HistoryViewState extends State<HistoryView> {
       body: Column(
           children: [
             Container(width: double.infinity, child: Text("연속$stack일 진행중입니다")),
-            Container(padding: EdgeInsets.all(10), child: CustomTable()),
-            Container(width: double.infinity, child: Text("최대스택: $maxStack")),
+            Container(width: double.infinity, padding: EdgeInsets.only(left: 5+MediaQuery.of(context).size.width/20,top:10), child: Text(style: TextStyle(fontSize: MediaQuery.of(context).size.width*0.3/15),"Today")),
+            Container(padding: EdgeInsets.only(left:10,right: 10), child: CustomTable()),
+            Container(padding: EdgeInsets.only(top: 10), width: double.infinity, child: Text("최대스택: $maxStack")),
             TextButton(onPressed:(){  Navigator.push(context, MaterialPageRoute(builder: (context) => const MoreHistoryView(),));}, child: Text("더보기")),
             Container(padding: EdgeInsets.only(top:50), child: Image.asset('assets/images/crown.png',height: 128,width: 128))
           ],
