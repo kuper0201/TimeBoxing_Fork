@@ -71,6 +71,8 @@ class _PlanViewState extends State<PlanView> {
   @override
   void initState() {
     expansionControllers = List<ExpansionTileController>.generate(widget.nameList.length, (index) => ExpansionTileController());
+    var brightness = SchedulerBinding.instance.platformDispatcher.platformBrightness;
+    isDarkMode = brightness == Brightness.dark;
     super.initState();
   }
   
@@ -231,12 +233,5 @@ class _PlanViewState extends State<PlanView> {
         ]
       )
     );
-  }
-
-  @override
-  void initState() {
-    var brightness = SchedulerBinding.instance.platformDispatcher.platformBrightness;
-    isDarkMode = brightness == Brightness.dark;
-    super.initState();
   }
 }
