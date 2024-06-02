@@ -48,6 +48,9 @@ dependencies:
   syncfusion_flutter_calendar: ^25.2.5
   flutter_datetime_picker_plus: ^2.2.0
 
+  flutter_week_view:
+    path: time_week_view_flutter
+
   equatable: ^2.0.5
 
 dev_dependencies:

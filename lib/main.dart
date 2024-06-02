@@ -68,10 +68,6 @@ class _MainViewState extends State<MainView> {
             icon: Icon(Icons.settings),
             label: 'Setting',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'testpage',
-          ),
         ],
         type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,

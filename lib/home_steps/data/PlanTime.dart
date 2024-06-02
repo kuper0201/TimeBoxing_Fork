@@ -1,15 +1,12 @@
+import 'package:flutter_week_view/flutter_week_view.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 
-class PlanTime extends Equatable {
-  PlanTime(this.eventName, this.from, this.to, this.background, this.isAllDay);
+class PlanTime extends FlutterWeekViewEvent with EquatableMixin {
+  PlanTime({required super.title, required super.description, required super.start, required super.end, super.backgroundColor});
 
-  String eventName;
-  DateTime from;
-  DateTime to;
-  Color background;
-  bool isAllDay;
+  @override
+  List<Object?> get props => [super.title];
   
   @override
-  List<Object?> get props => [eventName];
+  bool? get stringify => true;
 }
