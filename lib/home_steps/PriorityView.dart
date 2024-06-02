@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class PriorityView extends StatefulWidget {
   final List<String> nameList;
@@ -13,6 +14,12 @@ class PriorityView extends StatefulWidget {
 class _PriorityViewState extends State<PriorityView> {
   int currentPriority = 0;
 
+  @override
+  void initState() {
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
+    super.initState();
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

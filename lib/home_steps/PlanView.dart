@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_week_view/flutter_week_view.dart';
 import 'package:split_view/split_view.dart';
 
@@ -76,6 +77,8 @@ class _PlanViewState extends State<PlanView> {
 
   @override
   void initState() {
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
+    
     expansionControllers = List<ExpansionTileController>.generate(widget.nameList.length, (index) => ExpansionTileController());
     if(Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
       dg = DragStartingGesture.tap;

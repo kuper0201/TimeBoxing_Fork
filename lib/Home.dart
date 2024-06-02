@@ -7,9 +7,7 @@ import 'package:time_boxing/home_steps/StepViewPage.dart';
 import 'home_steps/PlanView.dart';
 
 class HomeView extends StatefulWidget {
-  List<TimeBoxingInfoData> dat = [];
-
-  HomeView({super.key});
+  const HomeView({super.key});
 
   @override
   State<HomeView> createState() => _HomeViewState();
@@ -22,7 +20,6 @@ class _HomeViewState extends State<HomeView> {
     TimeBoxingRepository tr = TimeBoxingRepository();
 
     DateTime now = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    int nowInt = DateTime.now().hour * 60 + DateTime.now().minute;
     return tr.selectTimeBoxing(now);
   }
 
@@ -32,15 +29,25 @@ class _HomeViewState extends State<HomeView> {
     super.initState();
   }
 
-  Widget buildPlanTile(String task, int startTime, int endTime) {
-    return ListTile(
-      title: Text(task, style: const TextStyle(fontSize: 20)),
-      subtitle: Row(
-        children: [
-          Text("${startTime ~/ 60}:${startTime % 60}", style: const TextStyle(fontSize: 18)),
-          const Text("     "),
-          Text("${endTime ~/ 60}:${endTime % 60}", style: const TextStyle(fontSize: 18))
-        ],
+  Widget buildPlanTile(TimeBoxingInfoData? data) {
+    if(data == null) {
+      return const Card(
+        child: ListTile(
+          title: Text("일정이 없습니다.")
+        )
+      );
+    }
+
+    return Card(
+      child: ListTile(
+        title: Text(data.task, style: const TextStyle(fontSize: 20)),
+        subtitle: Row(
+          children: [
+            Text("${data.startTime ~/ 60}:${data.startTime % 60}", style: const TextStyle(fontSize: 18)),
+            const Text("     "),
+            Text("${data.endTime ~/ 60}:${data.endTime % 60}", style: const TextStyle(fontSize: 18))
+          ],
+        )
       )
     );
   }
@@ -53,8 +60,6 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget getMainWidget(BuildContext context) {
-    // Todo - DB 쿼리 이용해 현재 시간 일정 존재 확인
-
     return FutureBuilder(
       future: getFromDB(),
       builder: (context, snapshot) {
@@ -62,16 +67,26 @@ class _HomeViewState extends State<HomeView> {
           return const CircularProgressIndicator();
         } else {
           if(snapshot.data!.isNotEmpty) {
-            current = snapshot.data![0];
+            List<TimeBoxingInfoData> lst = [];
+            int nowInt = DateTime.now().hour * 60 + DateTime.now().minute;
+            for(final dt in snapshot.data!) {
+              if(dt.startTime <= nowInt && nowInt <= dt.endTime) {
+                current = dt;
+                break;
+              } else if(nowInt < dt.startTime) {
+                lst.add(dt);
+              }
+            }
+
             return Column(
               children: [
-                Card(child: buildPlanTile(current!.task, current!.startTime, current!.endTime)),
-                const SizedBox(
-                  width: double.infinity,
-                  child: Padding(padding: EdgeInsets.only(left: 15, top: 20), child: Text("다음 일정", style: TextStyle(fontSize: 25), textAlign: TextAlign.left)),
-                ),
-                Card(child: buildPlanTile("일정 이름", 100, 200)),
-                Card(child: buildPlanTile("일정 이름", 100, 200)),
+                buildSizedBox("현재 일정"),
+                buildPlanTile(current),
+
+                buildSizedBox("다음 일정"),
+                buildPlanTile(lst[0]),
+                buildPlanTile(lst[1]),
+
                 Padding(
                   padding: const EdgeInsets.only(top: 5),
                   child: Card(
@@ -105,7 +120,9 @@ class _HomeViewState extends State<HomeView> {
           } else {
             return InkWell(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const StepViewPage()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const StepViewPage())).then((v) {
+                  setState(() {});
+                });
               },
               child: Ink(
                 width: 300,
