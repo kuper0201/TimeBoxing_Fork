@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 class TimeBoxingRepository extends ChangeNotifier {
   //field
-
   final Mydatabase _myDatabase;
 
   //Singleton
@@ -15,7 +14,6 @@ class TimeBoxingRepository extends ChangeNotifier {
   factory TimeBoxingRepository() {
     return _timeBoxingRepository;
   }
-
 
   // TimeBoxingInfo insert
   Future<int> insertTimeBoxing(DateTime date, String task, int priority, int startTime, int endTime) {
@@ -29,8 +27,21 @@ class TimeBoxingRepository extends ChangeNotifier {
     return result;
   }
 
-  // TimeBoxingInfo DB Stream
-  Stream<List<TimeBoxingInfoData>> getTimeBoxingStream() {
-    return _myDatabase.select(_myDatabase.timeBoxingInfo).watch();
+  // select current TimeBox
+  Future<List<TimeBoxingInfoData>> selectCurrentTime(DateTime now) {
+    DateTime currentDate = DateTime(now.year, now.month, now.day);
+    final currentTime = Variable(now.hour * 60 + now.minute);
+    return (_myDatabase.select(_myDatabase.timeBoxingInfo)..where(
+      (t) => t.date.equals(currentDate) & currentTime.isBiggerOrEqual(t.startTime) & currentTime.isSmallerOrEqual(t.endTime)
+    )).get();
+  }
+
+  // select next TimeBox(limit: 2)
+  Future<List<TimeBoxingInfoData>> selectNextTime(DateTime now) {
+    DateTime currentDate = DateTime(now.year, now.month, now.day);
+    final currentTime = Variable(now.hour * 60 + now.minute);
+    return (_myDatabase.select(_myDatabase.timeBoxingInfo)..where(
+      (t) => t.date.equals(currentDate) & currentTime.isSmallerThan(t.startTime)
+    )..limit(2)).get();
   }
 }

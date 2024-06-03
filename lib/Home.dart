@@ -3,6 +3,7 @@ import 'package:time_boxing/DB/database.dart';
 import 'package:time_boxing/DB/models.dart';
 import 'package:time_boxing/DB/repositoryForTimeBoxing.dart';
 import 'package:time_boxing/home_steps/StepViewPage.dart';
+import 'package:time_boxing/home_steps/data/PlanTime.dart';
 
 import 'home_steps/PlanView.dart';
 
@@ -16,16 +17,29 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   TimeBoxingInfoData? current;
 
-  Future<List<TimeBoxingInfoData>> getFromDB() async {
+  Future<List<TimeBoxingInfoData>> selectNextTimeBox() async {
     TimeBoxingRepository tr = TimeBoxingRepository();
 
+    return tr.selectNextTime(DateTime.now());
+  }
+
+  Future<List<TimeBoxingInfoData>> selectCurrentTimeBox() async {
+    TimeBoxingRepository tr = TimeBoxingRepository();
+
+    return tr.selectCurrentTime(DateTime.now());
+  }
+
+  Future<List<TimeBoxingInfoData>> selectAllTimeBox() async {
+    TimeBoxingRepository tr = TimeBoxingRepository();
+    
     DateTime now = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     return tr.selectTimeBoxing(now);
   }
 
   @override
   void initState() {
-    getFromDB();
+    selectCurrentTimeBox();
+    selectNextTimeBox();
     super.initState();
   }
 
@@ -61,22 +75,18 @@ class _HomeViewState extends State<HomeView> {
 
   Widget getMainWidget(BuildContext context) {
     return FutureBuilder(
-      future: getFromDB(),
+      future: Future.wait([
+        selectCurrentTimeBox(),
+        selectNextTimeBox()
+      ]),
       builder: (context, snapshot) {
         if(!snapshot.hasData) {
           return const CircularProgressIndicator();
+        } else if(snapshot.hasError) {
+          return const Text("Error");
         } else {
-          if(snapshot.data!.isNotEmpty) {
-            List<TimeBoxingInfoData> lst = [];
-            int nowInt = DateTime.now().hour * 60 + DateTime.now().minute;
-            for(final dt in snapshot.data!) {
-              if(dt.startTime <= nowInt && nowInt <= dt.endTime) {
-                current = dt;
-                break;
-              } else if(nowInt < dt.startTime) {
-                lst.add(dt);
-              }
-            }
+          if(snapshot.data![0].isNotEmpty || snapshot.data![1].isNotEmpty) {
+            current = (snapshot.data!.first.isEmpty) ? null : snapshot.data!.first[0];
 
             return Column(
               children: [
@@ -84,9 +94,10 @@ class _HomeViewState extends State<HomeView> {
                 buildPlanTile(current),
 
                 buildSizedBox("다음 일정"),
-                buildPlanTile(lst[0]),
-                buildPlanTile(lst[1]),
-
+                if(snapshot.data![1].isNotEmpty)
+                  for(final it in snapshot.data![1])
+                    buildPlanTile(it),
+                    
                 Padding(
                   padding: const EdgeInsets.only(top: 5),
                   child: Card(
@@ -94,9 +105,28 @@ class _HomeViewState extends State<HomeView> {
                       height: 60,
                       width: double.infinity,
                       child: InkWell(
-                        onTap: () {
-                          // DB Query 후 PlanView에 넘겨 줄 것
-                          // Navigator.push(context, MaterialPageRoute(builder: (context) => const PlanView()));
+                        onTap: () async {
+                          List<String> nameList = [];
+                          List<String> priority = [];
+                          Map<String, DateTime> startTime = {};
+                          Map<String, DateTime> endTime = {};
+                          List<PlanTime> planList = [];
+
+                          final selAll = await selectAllTimeBox();
+                          for(final it in selAll) {
+                            nameList.add(it.task);
+                            priority.add(it.task);
+
+                            DateTime dt = DateTime.now();
+                            startTime[it.task] = DateTime(dt.year, dt.month, dt.day, it.startTime ~/ 60, it.startTime % 60);
+                            endTime[it.task] = DateTime(dt.year, dt.month, dt.day, it.endTime ~/ 60, it.endTime % 60);
+
+                            planList.add(PlanTime(title: it.task, description: "", start: startTime[it.task]!, end: endTime[it.task]!));
+                          }
+
+                          if(context.mounted) {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => StepViewPage.edit(nameList, priority, startTime, endTime, planList)));
+                          }
                         },
                         child: const Center(
                           child: Row(
@@ -120,7 +150,7 @@ class _HomeViewState extends State<HomeView> {
           } else {
             return InkWell(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const StepViewPage())).then((v) {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => StepViewPage())).then((v) {
                   setState(() {});
                 });
               },
