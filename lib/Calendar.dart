@@ -1,9 +1,10 @@
+import 'package:flutter/rendering.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart' as CV; // 캘린더
 import 'package:flutter/material.dart';
+import 'package:time_boxing/DB/database.dart';
 
 import 'calendar_steps/FlushView.dart';
-import 'calendar_steps/PlanningView.dart';
-import 'calendar_steps/PriView.dart';
+import 'DB/repositoryForTimeBoxing.dart';
 
 class CalendarView extends StatefulWidget {
   const CalendarView({super.key});
@@ -28,46 +29,66 @@ class _CalendarViewState extends State<CalendarView> {
   //   initializeDateFormatting(Localizations.localeOf(context).languageCode);
   // }
 
+  Future<List<TimeBoxingInfoData>> fetchFromDB() async {
+    TimeBoxingRepository db = TimeBoxingRepository();
+    return db.selectTimeBoxing(selectedDay);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(  
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           CV.SfCalendar(
             view: CV.CalendarView.month,
             showNavigationArrow: true,
             todayHighlightColor: Colors.red,
+            onSelectionChanged: (calendarSelectionDetails) {
+              setState(() {
+                selectedDay = calendarSelectionDetails.date!;
+              });
+            },
           ),
-          Expanded(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(), 
-              onPressed:(){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const FlushView(),));
-              },
-              child: const Text("flush")
-            )
-          ),
-          Expanded(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(),
-              onPressed:(){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const PriorityView()));
-                },
-              child: const Text("pri")
-            )
-          ),
-          Expanded(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(),
-              onPressed:(){Navigator.push(context, MaterialPageRoute(builder: (context) => const PlanView()));
-              },
-              child: const Text("planning")
-            )
+          FutureBuilder(
+            future: fetchFromDB(),
+            builder: (context, snapshot) {
+              if(!snapshot.hasData) {
+                return const CircularProgressIndicator();
+              } 
+              else if(snapshot.data!.isNotEmpty) {
+                return Column(
+                  children: [
+                    Expanded(
+                      flex: 7,
+                      child: Column(
+                        children: [
+                          Expanded(child:Text(snapshot.data![0].task)),
+                          Expanded(child:Text(snapshot.data![1].task)),
+                          Expanded(child:Text(snapshot.data![2].task)),
+                        ]
+                      )
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(), 
+                        onPressed:(){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const FlushView(),));
+                        },
+                        child: const Text("flush")
+                      )
+                    ),
+                  ],
+                );
+              } else {
+                return Expanded(child: Container());
+              }
+            }
           )
         ]
       )
     );
-  }
+  } 
 }
+      
