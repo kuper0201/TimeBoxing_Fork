@@ -183,7 +183,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: getMainWidget(context)),
+      body: Center(child: SingleChildScrollView(child: getMainWidget(context))),
     );
   }
 }
