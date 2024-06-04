@@ -125,7 +125,9 @@ class _HomeViewState extends State<HomeView> {
                           }
 
                           if(context.mounted) {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => StepViewPage.edit(nameList, priority, startTime, endTime, planList)));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => StepViewPage.edit(nameList, priority, startTime, endTime, planList))).then((v) {
+                              setState(() {});
+                            });
                           }
                         },
                         child: const Center(

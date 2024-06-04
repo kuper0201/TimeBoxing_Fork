@@ -18,7 +18,9 @@ class PlanView extends StatefulWidget {
   final Map<String, DateTime> endTime;
   final List<PlanTime> planList;
   final PageController pc;
-  const PlanView({super.key, required this.nameList, required this.priority, required this.startTime, required this.endTime, required this.planList, required this.pc});
+  final bool isEdit;
+
+  const PlanView({super.key, required this.nameList, required this.priority, required this.startTime, required this.endTime, required this.planList, required this.pc, required this.isEdit});
 
   @override
   State<PlanView> createState() => _PlanViewState();
@@ -279,19 +281,26 @@ class _PlanViewState extends State<PlanView> {
               padding: const EdgeInsets.all(10),
               width: double.infinity,
               child: OutlinedButton(
-                onPressed: () {
+                onPressed: () async {
                   // DB 저장
 
                   TimeBoxingRepository tr = TimeBoxingRepository();
+                  
                   DateTime now = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+                  
+                  if(widget.isEdit) {
+                    await tr.updateTimeBoxing(now);
+                  }
                   for(final item in widget.planList) {
                     int st = item.start.hour * 60 + item.start.minute;
                     int end = item.end.hour * 60 + item.end.minute;
-                    tr.insertTimeBoxing(now, item.title, widget.priority.indexOf(item.title), st, end);
+                    await tr.insertTimeBoxing(now, item.title, widget.priority.indexOf(item.title), st, end);
                   }
 
                   // 초기화면으로 돌아감
-                  Navigator.popUntil(context, (route) => route.isFirst);
+                  if(context.mounted) {
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                  }
                 },
                 child: const Text("저장")
               )

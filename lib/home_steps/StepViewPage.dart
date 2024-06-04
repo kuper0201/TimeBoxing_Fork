@@ -11,9 +11,13 @@ class StepViewPage extends StatefulWidget {
   Map<String, DateTime> startTime = {};
   Map<String, DateTime> endTime = {};
   List<PlanTime> planList = [];
+
+  bool isEdit = false;
   
   StepViewPage({super.key});
-  StepViewPage.edit(this.nameList, this.priority, this.startTime, this.endTime, this.planList);
+  StepViewPage.edit(this.nameList, this.priority, this.startTime, this.endTime, this.planList) {
+    isEdit = true;
+  }
 
   @override
   State<StepViewPage> createState() => _StepViewPageState();
@@ -89,7 +93,7 @@ class _StepViewPageState extends State<StepViewPage> {
       children: [
         FlushView(nameList: nameList, priority: priority, planList: planList, pc: pc),
         PriorityView(nameList: nameList, priority: priority, pc: pc),
-        PlanView(nameList: nameList, priority: priority, startTime: startTime, endTime: endTime, planList: planList, pc: pc)
+        PlanView(nameList: nameList, priority: priority, startTime: startTime, endTime: endTime, planList: planList, pc: pc, isEdit: widget.isEdit,)
       ],
     );
   }

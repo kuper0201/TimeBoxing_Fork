@@ -20,6 +20,11 @@ class TimeBoxingRepository extends ChangeNotifier {
     return _myDatabase.into(_myDatabase.timeBoxingInfo).insert(
         TimeBoxingInfoCompanion.insert(date: date, task: task, priority: priority, startTime: startTime, endTime: endTime));
   }
+
+  // update TimeBoxingInfo
+  Future updateTimeBoxing(DateTime date) {
+    return (_myDatabase.delete(_myDatabase.timeBoxingInfo)..where((t) => t.date.equals(date))).go();
+  }
   
   // select TimeBoxingInfo
   Future<List<TimeBoxingInfoData>> selectTimeBoxing(DateTime date) {
