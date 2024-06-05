@@ -36,17 +36,22 @@ class TimeBoxingRepository extends ChangeNotifier {
   Future<List<TimeBoxingInfoData>> selectCurrentTime(DateTime now) {
     DateTime currentDate = DateTime(now.year, now.month, now.day);
     final currentTime = Variable(now.hour * 60 + now.minute);
-    return (_myDatabase.select(_myDatabase.timeBoxingInfo)..where(
-      (t) => t.date.equals(currentDate) & currentTime.isBiggerOrEqual(t.startTime) & currentTime.isSmallerOrEqual(t.endTime)
-    )).get();
+    final query = _myDatabase.select(_myDatabase.timeBoxingInfo)
+      ..where((t) => t.date.equals(currentDate) & currentTime.isBiggerOrEqual(t.startTime) & currentTime.isSmallerOrEqual(t.endTime))
+      ..orderBy([(t) => OrderingTerm(expression: t.startTime), (t) => OrderingTerm(expression: t.endTime)]);
+
+    return query.get();
   }
 
   // select next TimeBox(limit: 2)
   Future<List<TimeBoxingInfoData>> selectNextTime(DateTime now) {
     DateTime currentDate = DateTime(now.year, now.month, now.day);
     final currentTime = Variable(now.hour * 60 + now.minute);
-    return (_myDatabase.select(_myDatabase.timeBoxingInfo)..where(
-      (t) => t.date.equals(currentDate) & currentTime.isSmallerThan(t.startTime)
-    )..limit(2)).get();
+    final query = _myDatabase.select(_myDatabase.timeBoxingInfo)
+      ..where((t) => t.date.equals(currentDate) & currentTime.isSmallerThan(t.startTime))
+      ..orderBy([(t) => OrderingTerm(expression: t.startTime), (t) => OrderingTerm(expression: t.endTime)])
+      ..limit(2);
+
+    return query.get();
   }
 }

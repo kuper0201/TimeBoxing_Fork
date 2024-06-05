@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:time_boxing/DB/database.dart';
-import 'package:time_boxing/DB/models.dart';
 import 'package:time_boxing/DB/repositoryForTimeBoxing.dart';
 import 'package:time_boxing/home_steps/StepViewPage.dart';
 import 'package:time_boxing/home_steps/data/PlanTime.dart';
-
-import 'home_steps/PlanView.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -43,6 +40,10 @@ class _HomeViewState extends State<HomeView> {
     super.initState();
   }
 
+  String leadingZero(int num) {
+    return num.toString().padLeft(2, '0');
+  }
+
   Widget buildPlanTile(TimeBoxingInfoData? data) {
     if(data == null) {
       return const Card(
@@ -57,9 +58,9 @@ class _HomeViewState extends State<HomeView> {
         title: Text(data.task, style: const TextStyle(fontSize: 20)),
         subtitle: Row(
           children: [
-            Text("${data.startTime ~/ 60}:${data.startTime % 60}", style: const TextStyle(fontSize: 18)),
+            Text("${leadingZero(data.startTime ~/ 60)}:${leadingZero(data.startTime % 60)}", style: const TextStyle(fontSize: 18)),
             const Text("     "),
-            Text("${data.endTime ~/ 60}:${data.endTime % 60}", style: const TextStyle(fontSize: 18))
+            Text("${leadingZero(data.endTime ~/ 60)}:${leadingZero(data.endTime % 60)}", style: const TextStyle(fontSize: 18))
           ],
         )
       )
@@ -115,7 +116,10 @@ class _HomeViewState extends State<HomeView> {
                           final selAll = await selectAllTimeBox();
                           for(final it in selAll) {
                             nameList.add(it.task);
-                            priority.add(it.task);
+                            
+                            if(it.priority != -1) {
+                              priority.add(it.task);
+                            }
 
                             DateTime dt = DateTime.now();
                             startTime[it.task] = DateTime(dt.year, dt.month, dt.day, it.startTime ~/ 60, it.startTime % 60);
