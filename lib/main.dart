@@ -34,7 +34,7 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   int _selectedIndex = 0;  
   final List<Widget> _widgetOptions = <Widget>[
-    const HomeView(),
+    HomeView(),
     const CalendarView(),
     const HistoryView(),
     const SettingView()
