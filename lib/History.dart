@@ -52,16 +52,8 @@ class CustomTable extends StatelessWidget { //db쿼리문 통해 35일전 date�
     double cellSize = MediaQuery.of(context).size.width/10; // 칸의 크기를 화면 너비의 1/10로 설정
     double screenHeight = MediaQuery.of(context).size.height*0.3/5; 
 
-
     //Boolean 리스트 생성
     List<ZandiInfoData> ZandiData = getZandi35Ago() as List<ZandiInfoData>;
-
-    //zandi table 데이터 null 여부 확인
-    if(ZandiData.isEmpty) {
-      repository.insertZandiInfo_FirstTime(today);
-      ZandiData = getZandi35Ago() as List<ZandiInfoData>; 
-    }
-
 
     //연속일자 값 저장
     currentStack = ZandiData[ZandiData.length-1].stack;
