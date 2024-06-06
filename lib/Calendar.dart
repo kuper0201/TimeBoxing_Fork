@@ -79,8 +79,7 @@ class _CalendarViewState extends State<CalendarView> {
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(),
               onPressed:(){
-                reposiotry.insertZandiInfo_FirstTime(selectedDay);
-                reposiotry.insertZandiDummyData(selectedDay, 3);
+                
               },
               child: const Text("zandi data insert")
             )

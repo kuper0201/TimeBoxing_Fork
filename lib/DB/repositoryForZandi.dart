@@ -62,10 +62,4 @@ class RepositoryForZandi extends ChangeNotifier {
     return result;
   }
 
-  //테스트용 쿼리
-  Future<int> insertZandiDummyData(DateTime date, int stack) {
-    return _myDatabase.into(_myDatabase.zandiInfo).insert(ZandiInfoCompanion.insert(date: date, stack: stack));
-  }
-  //테스트용 쿼리
-
 }
