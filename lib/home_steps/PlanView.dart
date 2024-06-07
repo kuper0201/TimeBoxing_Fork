@@ -8,8 +8,7 @@ import 'package:flutter_week_view/flutter_week_view.dart';
 import 'package:split_view/split_view.dart';
 
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as picker;
-import 'package:time_boxing/DB/repositoryForTimeBoxing.dart';
-import 'package:time_boxing/DB/repositoryForZandi.dart';
+import 'package:time_boxing/DB/database.dart';
 import 'package:time_boxing/home_steps/data/PlanTime.dart';
 
 class PlanView extends StatefulWidget {
@@ -28,8 +27,7 @@ class PlanView extends StatefulWidget {
 }
 
 class _PlanViewState extends State<PlanView> {
-  TimeBoxingRepository tr = TimeBoxingRepository();
-  RepositoryForZandi zd = RepositoryForZandi();
+  Mydatabase db = Mydatabase.instance;
 
   bool isDarkMode = false;
   
@@ -287,27 +285,24 @@ class _PlanViewState extends State<PlanView> {
               child: OutlinedButton(
                 onPressed: () async {
                   // DB 저장
-
-                  
-                  
                   DateTime now = DateTime.now();
                   DateTime onlyDate = DateTime(now.year, now.month, now.day);
                   
                   if(widget.isEdit) {
-                    await tr.updateTimeBoxing(onlyDate);
+                    await db.timeBoxingRepository.updateTimeBoxing(onlyDate);
                   } else {
-                    final recentZandi = await zd.selectRecentData();
+                    final recentZandi = await db.zandiRepository.selectRecentData();
                     if(recentZandi.isEmpty) {
-                      await zd.insertZandiInfo_FirstTime(onlyDate);
+                      await db.zandiRepository.insertZandiInfo_FirstTime(onlyDate);
                     } else {
-                      await zd.updateZandiInfo(onlyDate, recentZandi[0].stack + 1);
+                      await db.zandiRepository.updateZandiInfo(onlyDate, recentZandi[0].stack + 1);
                     }
                   }
 
                   for(final item in widget.planList) {
                     int st = item.start.hour * 60 + item.start.minute;
                     int end = item.end.hour * 60 + item.end.minute;
-                    await tr.insertTimeBoxing(onlyDate, item.title, widget.priority.indexOf(item.title), st, end);
+                    await db.timeBoxingRepository.insertTimeBoxing(onlyDate, item.title, widget.priority.indexOf(item.title), st, end);
                   }
 
                   // 초기화면으로 돌아감

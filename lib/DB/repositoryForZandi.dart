@@ -54,5 +54,4 @@ class RepositoryForZandi extends ChangeNotifier {
     final result = (_myDatabase.select(_myDatabase.zandiInfo)..orderBy([(t) => OrderingTerm.desc(t.stack)])..limit(1)).get();
     return result;
   }
-
 }

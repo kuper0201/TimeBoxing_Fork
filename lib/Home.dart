@@ -12,25 +12,20 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  Mydatabase db = Mydatabase.instance;
   TimeBoxingInfoData? current;
 
   Future<List<TimeBoxingInfoData>> selectNextTimeBox() async {
-    TimeBoxingRepository tr = TimeBoxingRepository();
-
-    return tr.selectNextTime(DateTime.now());
+    return db.timeBoxingRepository.selectNextTime(DateTime.now());
   }
 
   Future<List<TimeBoxingInfoData>> selectCurrentTimeBox() async {
-    TimeBoxingRepository tr = TimeBoxingRepository();
-
-    return tr.selectCurrentTime(DateTime.now());
+    return db.timeBoxingRepository.selectCurrentTime(DateTime.now());
   }
 
   Future<List<TimeBoxingInfoData>> selectAllTimeBox() async {
-    TimeBoxingRepository tr = TimeBoxingRepository();
-    
     DateTime now = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    return tr.selectTimeBoxing(now);
+    return db.timeBoxingRepository.selectTimeBoxing(now);
   }
 
   @override

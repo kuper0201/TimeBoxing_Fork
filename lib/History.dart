@@ -12,8 +12,6 @@ class HistoryView extends StatefulWidget {
   State<HistoryView> createState() => _HistoryViewState();
 }
 
-RepositoryForZandi reposiotry = RepositoryForZandi();
-
 //get today
 DateTime today = DateTime(
   DateTime.now().year,
@@ -23,14 +21,16 @@ DateTime today = DateTime(
 
 // get Zandi MaxStack
 Future<int> getMaxStack() async {
-  final result = await repository.selectZandi35MaxStack();
+  Mydatabase db = Mydatabase.instance;
+  final result = await db.zandiRepository.selectZandi35MaxStack();
   final maxstack = result.first.stack;
   return maxstack;
 }
 
 //get ZandiList 35 ago
 Future<List> getZandi35Ago() async {
-  final result = await repository.selectZandi35DaysAgo(today.subtract(const Duration(days: 35)));
+  Mydatabase db = Mydatabase.instance;
+  final result = await db.zandiRepository.selectZandi35DaysAgo(today.subtract(const Duration(days: 35)));
   return result;
 }
 
