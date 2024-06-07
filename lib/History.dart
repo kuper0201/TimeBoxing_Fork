@@ -3,7 +3,6 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:time_boxing/DB/database.dart';
 import 'package:time_boxing/MoreHistoryView.dart';
-import 'package:time_boxing/DB/repositoryForZandi.dart';
 
 class HistoryView extends StatefulWidget {
   const HistoryView({super.key});
@@ -11,8 +10,6 @@ class HistoryView extends StatefulWidget {
   @override
   State<HistoryView> createState() => _HistoryViewState();
 }
-
-RepositoryForZandi repository = RepositoryForZandi();
 
 //get today
 DateTime today = DateTime(
@@ -23,14 +20,16 @@ DateTime today = DateTime(
 
 // get Zandi MaxStack
 Future<int> getMaxStack() async {
-  final result = await repository.selectZandi35MaxStack();
+  Mydatabase db = Mydatabase.instance;
+  final result = await db.zandiRepository.selectZandi35MaxStack();
   final maxstack = result.first.stack;
   return maxstack;
 }
 
 //get ZandiList 35 ago
-Future<List<ZandiInfoData>> getZandi35Ago() async {
-  final result = await repository.selectZandi35DaysAgo(today.subtract(const Duration(days: 35)));
+Future<List> getZandi35Ago() async {
+  Mydatabase db = Mydatabase.instance;
+  final result = await db.zandiRepository.selectZandi35DaysAgo(today.subtract(const Duration(days: 35)));
   return result;
 }
 

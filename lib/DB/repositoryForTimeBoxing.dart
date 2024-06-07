@@ -4,17 +4,11 @@ import 'package:flutter/material.dart';
 
 class TimeBoxingRepository extends ChangeNotifier {
   //field
+
   final Mydatabase _myDatabase;
 
-  //Singleton
-  static final TimeBoxingRepository _timeBoxingRepository = TimeBoxingRepository._inner();
-
-  TimeBoxingRepository._inner() : _myDatabase = Mydatabase();
-
-  factory TimeBoxingRepository() {
-    return _timeBoxingRepository;
-  }
-
+  TimeBoxingRepository(this._myDatabase);
+  
   // TimeBoxingInfo insert
   Future<int> insertTimeBoxing(DateTime date, String task, int priority, int startTime, int endTime) {
     return _myDatabase.into(_myDatabase.timeBoxingInfo).insert(

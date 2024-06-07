@@ -7,14 +7,7 @@ class RepositoryForZandi extends ChangeNotifier {
 
   final Mydatabase _myDatabase;
 
-  //Singleton
-  static final RepositoryForZandi _repositoryForZandi = RepositoryForZandi._inner();
-
-  RepositoryForZandi._inner() : _myDatabase = Mydatabase();
-
-  factory RepositoryForZandi() {
-    return _repositoryForZandi;
-  }
+  RepositoryForZandi(this._myDatabase);
 
   // insert ZandiInfo FirstTime
   Future<int> insertZandiInfo_FirstTime(DateTime date) {
@@ -61,5 +54,4 @@ class RepositoryForZandi extends ChangeNotifier {
     final result = (_myDatabase.select(_myDatabase.zandiInfo)..orderBy([(t) => OrderingTerm.desc(t.stack)])..limit(1)).get();
     return result;
   }
-
 }
