@@ -28,6 +28,9 @@ class PlanView extends StatefulWidget {
 }
 
 class _PlanViewState extends State<PlanView> {
+  TimeBoxingRepository tr = TimeBoxingRepository();
+  RepositoryForZandi zd = RepositoryForZandi();
+
   bool isDarkMode = false;
   
   GlobalKey gk = GlobalKey();
@@ -285,7 +288,7 @@ class _PlanViewState extends State<PlanView> {
                 onPressed: () async {
                   // DB 저장
 
-                  TimeBoxingRepository tr = TimeBoxingRepository();
+                  
                   
                   DateTime now = DateTime.now();
                   DateTime onlyDate = DateTime(now.year, now.month, now.day);
@@ -293,10 +296,9 @@ class _PlanViewState extends State<PlanView> {
                   if(widget.isEdit) {
                     await tr.updateTimeBoxing(onlyDate);
                   } else {
-                    RepositoryForZandi zd = RepositoryForZandi();
                     final recentZandi = await zd.selectRecentData();
                     if(recentZandi.isEmpty) {
-                      zd.insertZandiInfo_FirstTime(onlyDate);
+                      await zd.insertZandiInfo_FirstTime(onlyDate);
                     } else {
                       await zd.updateZandiInfo(onlyDate, recentZandi[0].stack + 1);
                     }

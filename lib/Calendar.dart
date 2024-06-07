@@ -1,16 +1,9 @@
+import 'package:flutter/rendering.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart' as CV; // 캘린더
 import 'package:flutter/material.dart';
-import 'package:time_boxing/History.dart';
-
+import 'package:time_boxing/DB/repositoryForTimeBoxing.dart';
+import 'DB/database.dart';
 import 'calendar_steps/FlushView.dart';
-import 'calendar_steps/PlanningView.dart';
-import 'calendar_steps/PriView.dart';
-
-//테스트용 코드 테스트 종료후 삭제해도됨
-import 'package:time_boxing/DB/repositoryForZandi.dart';
-
-RepositoryForZandi repistory = RepositoryForZandi();
-//테스트용 코드 테스트 종료후 삭제해도됨
 
 class CalendarView extends StatefulWidget {
   const CalendarView({super.key});
@@ -19,6 +12,7 @@ class CalendarView extends StatefulWidget {
   State<CalendarView> createState() => _CalendarViewState();
 }
 
+ Mydatabase db = Mydatabase.instance;
 
 class _CalendarViewState extends State<CalendarView> {
   DateTime selectedDay = DateTime(
@@ -35,58 +29,65 @@ class _CalendarViewState extends State<CalendarView> {
   //   initializeDateFormatting(Localizations.localeOf(context).languageCode);
   // }
 
+  Future<List<TimeBoxingInfoData>> fetchFromDB() async {
+    return db.timeBoxingRepository.selectTimeBoxing(selectedDay);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(  
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           CV.SfCalendar(
             view: CV.CalendarView.month,
             showNavigationArrow: true,
             todayHighlightColor: Colors.red,
+            onSelectionChanged: (calendarSelectionDetails) {
+              setState(() {
+                selectedDay = calendarSelectionDetails.date!;
+              });
+            },
           ),
-          Expanded(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(), 
-              onPressed:(){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const FlushView(),));
-              },
-              child: const Text("flush")
-            )
-          ),
-          Expanded(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(),
-              onPressed:(){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const PriorityView()));
-                },
-              child: const Text("pri")
-            )
-          ),
-          Expanded(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(),
-              onPressed:(){Navigator.push(context, MaterialPageRoute(builder: (context) => const PlanView()));
-              },
-              child: const Text("planning")
-            )
+          FutureBuilder(
+            future: fetchFromDB(),
+            builder: (context, snapshot) {
+              if(!snapshot.hasData) {
+                return const CircularProgressIndicator();
+              } 
+              else if(snapshot.data!.isNotEmpty) {
+                return Column(
+                  children: [
+                    Expanded(
+                      flex: 7,
+                      child: Column(
+                        children: [
+                          Expanded(child:Text(snapshot.data![0].task)),
+                          Expanded(child:Text(snapshot.data![1].task)),
+                          Expanded(child:Text(snapshot.data![2].task)),
+                        ]
+                      )
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(), 
+                        onPressed:(){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const FlushView(),));
+                        },
+                        child: const Text("flush")
+                      )
+                    ),
+                  ],
+                );
+              } else {
+                return Expanded(child: Container());
+              }
+            }
           )
-          //테스트용 코드 테스트 종료후 삭제해도됨
-          ,
-          Expanded(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(),
-              onPressed:(){
-                
-              },
-              child: const Text("zandi data insert")
-            )
-          )
-          //테스트용 코드 테스트 종료후 삭제해도됨
         ]
       )
     );
-  }
+  } 
 }
+      
