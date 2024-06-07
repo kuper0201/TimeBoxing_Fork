@@ -131,6 +131,7 @@ class _PlanViewState extends State<PlanView> {
               children: [
                 Container(
                   child: DayView(
+                    currentTimeIndicatorBuilder:(dayViewStyle, topOffsetCalculator, hoursColumnWidth, isRtl) {},
                     userZoomable: false,
                     events: widget.planList,
                     date: DateTime.now(),
