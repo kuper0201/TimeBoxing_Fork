@@ -87,7 +87,12 @@ class _HomeViewState extends State<HomeView> {
               child: Column(
                 children: [
                   buildSizedBox("현재 일정"),
-                  buildPlanTile(current),
+                  if(snapshot.data![0].isEmpty)
+                    buildPlanTile(current),
+
+                  if(snapshot.data![0].isNotEmpty)
+                    for(final it in snapshot.data![0])
+                      buildPlanTile(it),
 
                   buildSizedBox("다음 일정"),
                   if(snapshot.data![1].isNotEmpty)
