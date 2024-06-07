@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:time_boxing/DB/database.dart';
 import 'package:time_boxing/DB/repositoryForZandi.dart';
 
-RepositoryForZandi repository = RepositoryForZandi();
-
 //set today
 DateTime today = DateTime(
   DateTime.now().year,
@@ -12,12 +10,14 @@ DateTime today = DateTime(
 );
 
 Future<List> getzaniAll() async {
-  final result = await repository.selectZandiAll();
+  Mydatabase db = Mydatabase.instance;
+  final result = await db.zandiRepository.selectZandiAll();
   return result;
 }
 
 Future<List> getzaniMostLate() async {
-  final result = await repository.selectMostLateData();
+  Mydatabase db = Mydatabase.instance;
+  final result = await db.zandiRepository.selectMostLateData();
   return result;
 }
 
@@ -68,8 +68,7 @@ class CustomTable extends StatelessWidget {
     } else {
       tableRowCount = (tableRowCount/7).ceil();
     }
-     
-    
+
     //테이블 그리기
     return Table(
       border: TableBorder.all(),

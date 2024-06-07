@@ -1,9 +1,10 @@
 import 'package:flutter/rendering.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart' as CV; // 캘린더
 import 'package:flutter/material.dart';
-import 'package:time_boxing/DB/repositoryForTimeBoxing.dart';
-import 'DB/database.dart';
+import 'package:time_boxing/DB/database.dart';
+
 import 'calendar_steps/FlushView.dart';
+import 'DB/repositoryForTimeBoxing.dart';
 
 class CalendarView extends StatefulWidget {
   const CalendarView({super.key});
@@ -12,7 +13,6 @@ class CalendarView extends StatefulWidget {
   State<CalendarView> createState() => _CalendarViewState();
 }
 
- Mydatabase db = Mydatabase.instance;
 
 class _CalendarViewState extends State<CalendarView> {
   DateTime selectedDay = DateTime(
@@ -30,7 +30,8 @@ class _CalendarViewState extends State<CalendarView> {
   // }
 
   Future<List<TimeBoxingInfoData>> fetchFromDB() async {
-    return db.timeBoxingRepository.selectTimeBoxing(selectedDay);
+    Mydatabase mydb = Mydatabase.instance;
+    return mydb.timeBoxingRepository.selectTimeBoxing(selectedDay);
   }
 
   @override
