@@ -29,7 +29,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
 
-  #db viewe
+  #db viewer
   drift_db_viewer: ^2.1.0
 
 
