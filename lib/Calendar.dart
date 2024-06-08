@@ -2,9 +2,7 @@ import 'package:flutter/rendering.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart' as CV; // 캘린더
 import 'package:flutter/material.dart';
 import 'package:time_boxing/DB/database.dart';
-
 import 'calendar_steps/FlushView.dart';
-import 'DB/repositoryForTimeBoxing.dart';
 
 class CalendarView extends StatefulWidget {
   const CalendarView({super.key});
