@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:time_boxing/DB/database.dart';
 
-Mydatabase repository = Mydatabase.instance;
+Mydatabase db = Mydatabase.instance;
 
 //set today
 DateTime today = DateTime(
@@ -11,14 +11,18 @@ DateTime today = DateTime(
 );
 
 Future<List<ZandiInfoData>> getzaniAll() async {
-  final result = await repository.zandiRepository.selectZandiAll();
+  final result = await db.zandiRepository.selectZandiAll();
   return result;
 }
 
-Future<List<ZandiInfoData>> getzaniMostLate() async {
-  final result = await repository.zandiRepository.selectMostLateData();
-  return result;
+Future<DateTime> getzaniMostLate() async {
+  final result = await db.zandiRepository.selectMostLateData();
+  DateTime targetDate = result.first.date;
+  return targetDate;
 }
+
+//가장 오래된 날짜 저장용 빈값
+DateTime targetDate = DateTime.now();
 
 class ZandiInfoConvert {
   final int date;
@@ -58,9 +62,14 @@ class CustomTable extends StatelessWidget {
           //데이터를 정상적으로 받아올경우
           List<ZandiInfoData> ZandiData = snapshot.data!.map((d) => ZandiInfoData(date: d.date, stack: d.stack)).toList();
 
-          List<ZandiInfoData> ZandiMostLateData = getzaniMostLate() as List<ZandiInfoData>;
+          //최대연속값 저장
+          getzaniMostLate().then((value) {
+            targetDate = value;
+          }, onError: (error,stackstrace) {
+            
+          }); 
 
-          int maxStreakSize = today.difference(ZandiMostLateData.first.date).inDays; //getZandiMostLate - datetime.now()
+          int maxStreakSize = today.difference(targetDate).inDays; //getZandiMostLate - datetime.now()
           List<ZandiInfoConvert> converted = ZandiData.map((d) => ZandiInfoConvert(date: (today.difference(d.date).inDays), stack: d.stack)).toList();
           List<bool> items = List.generate(maxStreakSize, (idx) => false);
 
@@ -77,11 +86,10 @@ class CustomTable extends StatelessWidget {
           //table row check
           int tableRowCount = 0;
 
-          //true - 7의 배수 flase - 7의배수가 아님
-          if((maxStreakSize/7)%1 == 0) {
-            tableRowCount = maxStreakSize.floor();
+          if(maxStreakSize==0) {
+            tableRowCount = maxStreakSize+1;
           } else {
-            tableRowCount = (tableRowCount/7).ceil();
+            tableRowCount = (maxStreakSize/7).ceil();
           }
           
           //테이블 그리기
@@ -118,16 +126,23 @@ class _MoreHistoryViewState extends State<MoreHistoryView> {
    @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child:
-          Expanded(
-            child: ElevatedButton(
-              onPressed:(){
-                Navigator.popUntil(context, (route) => route.isFirst);
-              },
-              child: Text("back")
-            )
-          ) 
+      appBar: AppBar(
+        title: const Text("전체 히스토리"),
+        centerTitle: true,
+        backgroundColor: Colors.lightGreen,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded),
+          onPressed: () {
+            Navigator.popUntil(context, (route) => route.isFirst);
+          },
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(padding: EdgeInsets.only(left:10,right: 10), child: CustomTable())
+          ],
+        ),
       )
     );
   }

@@ -11,7 +11,7 @@ class HistoryView extends StatefulWidget {
   State<HistoryView> createState() => _HistoryViewState();
 }
 
-Mydatabase repository = Mydatabase.instance;
+Mydatabase db = Mydatabase.instance;
 
 //get today
 DateTime today = DateTime(
@@ -22,14 +22,14 @@ DateTime today = DateTime(
 
 //Zandi MaxStack
 Future<int> getMaxStack() async {
-  final result = await repository.zandiRepository.selectZandi35MaxStack();
+  final result = await db.zandiRepository.selectZandi35MaxStack();
   final maxstack = result.first.stack;
   return maxstack;
 }
 
 //get ZandiList 35 ago
 Future<List<ZandiInfoData>> getZandi35Ago() async {
-  final result = await repository.zandiRepository.selectZandi35DaysAgo(today.subtract(const Duration(days: 35)));
+  final result = await db.zandiRepository.selectZandi35DaysAgo(today.subtract(const Duration(days: 34)));
   return result;
 }
 
@@ -44,11 +44,21 @@ class ZandiInfoConvert {
 //연속일자 저장빈값
 int currentStack = 0;
 
+//최대 stack 저장빈값
+int maxstack = 0;
+
 class CustomTable extends StatelessWidget { //db쿼리문 통해 35일전 date값 이후의 값만 불러올것
   @override
   Widget build(BuildContext context) {
     double cellSize = MediaQuery.of(context).size.width/10; // 칸의 크기를 화면 너비의 1/10로 설정
-    double screenHeight = MediaQuery.of(context).size.height*0.3/5; 
+    double screenHeight = MediaQuery.of(context).size.height*0.3/5;
+
+    //최대연속값 저장
+    getMaxStack().then((value) {
+      maxstack = value;
+    }, onError: (error,stackstrace) {
+      maxstack = 19981225;
+    }); 
 
     return FutureBuilder<List<ZandiInfoData>>(
       future: getZandi35Ago(),
@@ -56,7 +66,7 @@ class CustomTable extends StatelessWidget { //db쿼리문 통해 35일전 date�
         if (!snapshot.hasData) {
           //로딩 애니메이션
           return CircularProgressIndicator();
-        } else if (snapshot.hasData) {
+        } else if (snapshot.hasError) {
           return Padding(padding: const EdgeInsets.all(8.0),
           child: Text(
             //에러일경우 에러메세지 출력
@@ -67,6 +77,7 @@ class CustomTable extends StatelessWidget { //db쿼리문 통해 35일전 date�
         } else {
           //데이터를 정상적으로 받아올경우
           List<ZandiInfoData> ZandiData = snapshot.data!.map((d) => ZandiInfoData(date: d.date, stack: d.stack)).toList();
+
           //연속일자 값 저장
           currentStack = ZandiData[ZandiData.length-1].stack;
 
@@ -83,6 +94,7 @@ class CustomTable extends StatelessWidget { //db쿼리문 통해 35일전 date�
                 idx++;
             }
           }
+
           //테이블 그리기
           return Table(
             border: TableBorder.all(),
@@ -123,7 +135,7 @@ class _HistoryViewState extends State<HistoryView> {
             Container(width: double.infinity, child: Text("연속$currentStack일 진행중입니다")),
             Container(width: double.infinity, padding: EdgeInsets.only(left: 5+MediaQuery.of(context).size.width/20,top:10), child: Text(style: TextStyle(fontSize: MediaQuery.of(context).size.width*0.3/15),"Today")),
             Container(padding: EdgeInsets.only(left:10,right: 10), child: CustomTable()),
-            Container(padding: EdgeInsets.only(top: 10), width: double.infinity, child: Text("최대스택: 1")),
+            Container(padding: EdgeInsets.only(top: 10), width: double.infinity, child: Text("최대스택: $maxstack")),
             TextButton(onPressed:(){  Navigator.push(context, MaterialPageRoute(builder: (context) => const MoreHistoryView(),));}, child: Text("더보기")),
             Container(padding: EdgeInsets.only(top:50), child: Image.asset('assets/images/crown.png',height: 128,width: 128))
           ],
