@@ -34,7 +34,7 @@ class _PlanViewState extends State<PlanView> {
   GlobalKey gk = GlobalKey();
   GlobalKey listGK = GlobalKey();
 
-  List<Color> colors = [const Color.fromARGB(255, 171, 222, 230), const Color.fromARGB(255, 203, 170, 203), const Color.fromARGB(255, 255, 255, 181), Color.fromARGB(255, 255, 204, 182), Color.fromARGB(255, 243, 176, 195)];
+  List<Color> colors = [const Color.fromARGB(255, 171, 222, 230), const Color.fromARGB(255, 203, 170, 203), const Color.fromARGB(255, 255, 204, 182), const Color.fromARGB(255, 243, 176, 195)];
   final random = Random();
   List<ExpansionTileController> expansionControllers = [];
   ScrollController scrollController = ScrollController();
@@ -79,26 +79,115 @@ class _PlanViewState extends State<PlanView> {
     });
   }
 
+  Future<void> showDialogAndSelectTime(String name, Map<String, DateTime> timeMap, void Function(DateTime) callback) async {
+    DateTime now = (timeMap.containsKey(name)) ? timeMap[name]! : DateTime.now();
+    DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now, theme: (isDarkMode) ? darkTheme : null);
+    if(selectedTime != null) {
+      callback(selectedTime);
+    }
+  }
+
+  Widget getExpansionTile(int index) {
+    return ExpansionTile(
+      initiallyExpanded: (widget.planList.contains(PlanTime(title: widget.nameList[index], description: "", start: DateTime.now(), end: DateTime.now()))) ? false : true,
+      shape: const Border(),
+      controller: expansionControllers[index],
+      title: Padding(padding: const EdgeInsets.only(left: 10), child: Text(widget.nameList[index], style: const TextStyle(fontSize: 21))),
+      children: [
+        Padding(padding: const EdgeInsets.all(5),
+          child: SizedBox(
+            width: double.infinity,
+            child: Row(
+              children: [
+                // 시작 시간 설정 버튼
+                Expanded(
+                  child: TextButton(
+                    onPressed: () => showDialogAndSelectTime(widget.nameList[index], widget.startTime, (selectedTime) => setState(() {
+                        widget.startTime[widget.nameList[index]] = selectedTime;
+
+                        if(!widget.endTime.containsKey(widget.nameList[index]) || widget.endTime[widget.nameList[index]]!.isBefore(selectedTime)) {
+                          widget.endTime[widget.nameList[index]] = selectedTime.add(const Duration(hours: 1));
+                        }
+                      })
+                    ),
+                    child: widget.startTime.containsKey(widget.nameList[index]) ? Text("${widget.startTime[widget.nameList[index]]!.hour.toString().padLeft(2, '0')} : ${widget.startTime[widget.nameList[index]]!.minute.toString().padLeft(2, '0')}", style: const TextStyle(fontSize: 20),) : const Text("시작 시간", style: TextStyle(fontSize: 20))
+                  )
+                ),
+
+                // 끝 시간 설정 버튼
+                Expanded(
+                  child: TextButton(
+                    onPressed: () => showDialogAndSelectTime(widget.nameList[index], widget.endTime, (selectedTime) => setState(() {
+                        widget.endTime[widget.nameList[index]] = selectedTime;
+
+                        if(!widget.startTime.containsKey(widget.nameList[index]) || selectedTime.isBefore(widget.startTime[widget.nameList[index]]!)) {
+                          widget.startTime[widget.nameList[index]] = selectedTime.subtract(const Duration(hours: 1));
+                        }
+                      })
+                    ),
+                    child: widget.endTime.containsKey(widget.nameList[index]) ? Text("${widget.endTime[widget.nameList[index]]!.hour.toString().padLeft(2, '0')} : ${widget.endTime[widget.nameList[index]]!.minute.toString().padLeft(2, '0')}", style: const TextStyle(fontSize: 20)) : const Text("끝 시간", style: TextStyle(fontSize: 20))
+                  )
+                ),
+
+                // 완료 버튼
+                Expanded(
+                  child: TextButton(
+                    onPressed:() {
+                      String name = widget.nameList[index];
+                      if(widget.startTime.containsKey(name) && widget.endTime.containsKey(name)) {
+                        appendPlan(name);
+                        expansionControllers[index].collapse();
+                        if(widget.startTime.length == 3 && widget.endTime.length == 3) {
+                          RenderBox listRB = listGK.currentContext!.findRenderObject() as RenderBox;
+                          RenderBox rb = gk.currentContext!.findRenderObject() as RenderBox;
+
+                          double move = scrollController.offset + (rb.size.height * 3 + rb.size.height * 2 * (widget.nameList.length - 3) - listRB.size.height);
+                          if(listRB.size.height <= rb.size.height * 2 * (widget.nameList.length - 3)) {
+                            move = rb.size.height * 3;
+                          }
+                          
+                          scrollController.animateTo(move, duration: const Duration(microseconds: 500), curve: Curves.ease);
+                        }
+                      }
+                    },
+                    child: const Text("완료", style: TextStyle(fontSize: 20))
+                  )
+                )
+              ],
+            )
+          )
+        )
+      ]
+    );
+  }
+
   @override
   void initState() {
+    // 키보드 숨기기
     SystemChannels.textInput.invokeMethod('TextInput.hide');
     
+    // Expansion 컨트롤러 생성
     expansionControllers = List<ExpansionTileController>.generate(widget.nameList.length, (index) => ExpansionTileController());
+    
+    // 데스크톱 OS에서는 tap으로 드래그 & 드롭
     if(Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
       dg = DragStartingGesture.tap;
     }
 
+    // 다크모드 설정 변수
     var brightness = SchedulerBinding.instance.platformDispatcher.platformBrightness;
-    isDarkMode = brightness == Brightness.dark;
+    isDarkMode = (brightness == Brightness.dark);
     super.initState();
   }
   
   @override
   Widget build(BuildContext context) {
+    // 우선순위 지정된 일정은 nameList에서 제거
     for(final p in widget.priority) {
       widget.nameList.remove(p);
     }
 
+    // nameList의 첫 번째 부분에 우선순위 일정 삽입
     widget.nameList.insertAll(0, widget.priority);
 
     return Scaffold(
@@ -131,13 +220,15 @@ class _PlanViewState extends State<PlanView> {
               children: [
                 Container(
                   child: DayView(
+                    currentTimeIndicatorBuilder: (_, __, ___, ____) {},
                     userZoomable: false,
                     events: widget.planList,
                     date: DateTime.now(),
                     style: const DayViewStyle(headerSize: 0),
+                    // 드래그 앤 드랍으로 일정 이동
                     dragAndDropOptions: DragAndDropOptions(
                       startingGesture: dg,
-                      onEventMove: (event, newStartTime) {
+                      onEventMove: (event, _) {
                         setState(() {
                           isMoving = true;
                           splitController.weights = [1.0, 0.0];
@@ -156,6 +247,7 @@ class _PlanViewState extends State<PlanView> {
                         });
                       },
                     ),
+                    // 드래그 앤 드랍으로 일정 길이 수정
                     resizeEventOptions: ResizeEventOptions(
                       snapToGridGranularity: const Duration(minutes: 15),
                       onEventResizeMove: (event, newEndTime) {
@@ -190,86 +282,7 @@ class _PlanViewState extends State<PlanView> {
                     itemBuilder: (BuildContext context, int index) {
                       return Card(
                         key: (index == 0) ? gk : null,
-                        child: ExpansionTile(
-                          initiallyExpanded: (widget.planList.contains(PlanTime(title: widget.nameList[index], description: "", start: DateTime.now(), end: DateTime.now()))) ? false : true,
-                          shape: const Border(),
-                          controller: expansionControllers[index],
-                          title: Padding(padding: const EdgeInsets.only(left: 10), child: Text(widget.nameList[index], style: const TextStyle(fontSize: 21))),
-                          children: [
-                            Padding(padding: const EdgeInsets.all(5),
-                              child: SizedBox(
-                                width: double.infinity,
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: TextButton(
-                                        onPressed:() async {
-                                          String name = widget.nameList[index];
-
-                                          DateTime now = (widget.startTime.containsKey(name)) ? widget.startTime[name]! : DateTime.now();
-                                          DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now, theme: (isDarkMode) ? darkTheme : null);
-                                          if(selectedTime != null) {
-                                            setState(() {
-                                              widget.startTime[name] = selectedTime;
-
-                                              if(!widget.endTime.containsKey(name) || widget.endTime[name]!.isBefore(selectedTime)) {
-                                                widget.endTime[name] = selectedTime.add(const Duration(hours: 1));
-                                              }
-                                            });
-                                          }
-                                        },
-                                        child: widget.startTime.containsKey(widget.nameList[index]) ? Text("${widget.startTime[widget.nameList[index]]!.hour.toString().padLeft(2, '0')} : ${widget.startTime[widget.nameList[index]]!.minute.toString().padLeft(2, '0')}", style: const TextStyle(fontSize: 20),) : const Text("시작 시간", style: TextStyle(fontSize: 20))
-                                      )
-                                    ),
-                                    Expanded(
-                                      child: TextButton(
-                                        onPressed:() async {
-                                          String name = widget.nameList[index];
-                                          DateTime now = (widget.endTime.containsKey(name)) ? widget.endTime[name]! : DateTime.now();
-
-                                          DateTime? selectedTime = await picker.DatePicker.showTime12hPicker(context, currentTime: now, theme: (isDarkMode) ? darkTheme : null);
-                                          if(selectedTime != null) {
-                                            setState(() {
-                                              widget.endTime[name] = selectedTime;
-
-                                              if(!widget.startTime.containsKey(name) || selectedTime.isBefore(widget.startTime[name]!)) {
-                                                widget.startTime[name] = selectedTime.subtract(const Duration(hours: 1));
-                                              }
-                                            });
-                                          }
-                                        },
-                                        child: widget.endTime.containsKey(widget.nameList[index]) ? Text("${widget.endTime[widget.nameList[index]]!.hour.toString().padLeft(2, '0')} : ${widget.endTime[widget.nameList[index]]!.minute.toString().padLeft(2, '0')}", style: const TextStyle(fontSize: 20)) : const Text("끝 시간", style: TextStyle(fontSize: 20))
-                                      )
-                                    ),
-                                    Expanded(
-                                      child: TextButton(
-                                        onPressed:() {
-                                          String name = widget.nameList[index];
-                                          if(widget.startTime.containsKey(name) && widget.endTime.containsKey(name)) {
-                                            appendPlan(name);
-                                            expansionControllers[index].collapse();
-                                            if(widget.startTime.length == 3 && widget.endTime.length == 3) {
-                                              RenderBox listRB = listGK.currentContext!.findRenderObject() as RenderBox;
-                                              RenderBox rb = gk.currentContext!.findRenderObject() as RenderBox;
-
-                                              if(listRB.size.height <= rb.size.height * 2 * (widget.nameList.length - 3)) {
-                                                scrollController.animateTo(rb.size.height * 3, duration: const Duration(microseconds: 500), curve: Curves.ease);
-                                              } else {
-                                                double move = scrollController.offset + (rb.size.height * 3 + rb.size.height * 2 * (widget.nameList.length - 3) - listRB.size.height);
-                                                scrollController.animateTo(move, duration: const Duration(microseconds: 500), curve: Curves.ease);
-                                              }
-                                            }
-                                          }
-                                        },
-                                        child: const Text("완료", style: TextStyle(fontSize: 20))
-                                      )
-                                    )
-                                  ],
-                                )
-                              )
-                            )
-                          ]
-                        )
+                        child: getExpansionTile(index),
                       );
                     }
                   ),
@@ -295,7 +308,13 @@ class _PlanViewState extends State<PlanView> {
                     if(recentZandi.isEmpty) {
                       await db.zandiRepository.insertZandiInfo_FirstTime(onlyDate);
                     } else {
-                      await db.zandiRepository.updateZandiInfo(onlyDate, recentZandi[0].stack + 1);
+                      // 어제면 스택 올림
+                      if(recentZandi[0].date.compareTo(onlyDate.subtract(const Duration(days: 1))) == 0) {
+                        await db.zandiRepository.updateZandiInfo(recentZandi[0].date, recentZandi[0].stack + 1);
+                      } else { // 아니면 오늘 추가후 1 설정
+                        await db.zandiRepository.insertZandiInfo_FirstTime(onlyDate);
+                        await db.zandiRepository.updateZandiInfo(onlyDate, 1);
+                      }
                     }
                   }
 

@@ -8,7 +8,13 @@ class TimeBoxingRepository extends ChangeNotifier {
   final Mydatabase _myDatabase;
 
   TimeBoxingRepository(this._myDatabase);
-  
+
+  // select Priority Plans
+  Future<List<TimeBoxingInfoData>> selectPriority(DateTime date) {
+    final result = (_myDatabase.select(_myDatabase.timeBoxingInfo)..where((t) => t.date.equals(date) & t.priority.equals(-1).not())).get();
+    return result;
+  }
+
   // TimeBoxingInfo insert
   Future<int> insertTimeBoxing(DateTime date, String task, int priority, int startTime, int endTime) {
     return _myDatabase.into(_myDatabase.timeBoxingInfo).insert(

@@ -3,7 +3,6 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:time_boxing/DB/database.dart';
 import 'package:time_boxing/MoreHistoryView.dart';
-import 'package:time_boxing/DB/repositoryForZandi.dart';
 
 class HistoryView extends StatefulWidget {
   const HistoryView({super.key});
@@ -12,6 +11,8 @@ class HistoryView extends StatefulWidget {
   State<HistoryView> createState() => _HistoryViewState();
 }
 
+Mydatabase db = Mydatabase.instance;
+
 //get today
 DateTime today = DateTime(
   DateTime.now().year,
@@ -19,18 +20,16 @@ DateTime today = DateTime(
   DateTime.now().day,
 );
 
-// get Zandi MaxStack
+//Zandi MaxStack
 Future<int> getMaxStack() async {
-  Mydatabase db = Mydatabase.instance;
   final result = await db.zandiRepository.selectZandi35MaxStack();
   final maxstack = result.first.stack;
   return maxstack;
 }
 
 //get ZandiList 35 ago
-Future<List> getZandi35Ago() async {
-  Mydatabase db = Mydatabase.instance;
-  final result = await db.zandiRepository.selectZandi35DaysAgo(today.subtract(const Duration(days: 35)));
+Future<List<ZandiInfoData>> getZandi35Ago() async {
+  final result = await db.zandiRepository.selectZandi35DaysAgo(today.subtract(const Duration(days: 34)));
   return result;
 }
 
@@ -45,56 +44,83 @@ class ZandiInfoConvert {
 //연속일자 저장빈값
 int currentStack = 0;
 
+//최대 stack 저장빈값
+int maxstack = 0;
 
 class CustomTable extends StatelessWidget { //db쿼리문 통해 35일전 date값 이후의 값만 불러올것
   @override
   Widget build(BuildContext context) {
     double cellSize = MediaQuery.of(context).size.width/10; // 칸의 크기를 화면 너비의 1/10로 설정
-    double screenHeight = MediaQuery.of(context).size.height*0.3/5; 
+    double screenHeight = MediaQuery.of(context).size.height*0.3/5;
 
-    //Boolean 리스트 생성
-    List<ZandiInfoData> ZandiData = getZandi35Ago() as List<ZandiInfoData>;
+    //최대연속값 저장
+    getMaxStack().then((value) {
+      maxstack = value;
+    }, onError: (error,stackstrace) {
+      maxstack = 19981225;
+    }); 
 
-    //연속일자 값 저장
-    currentStack = ZandiData[ZandiData.length-1].stack;
+    return FutureBuilder<List<ZandiInfoData>>(
+      future: getZandi35Ago(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          //로딩 애니메이션
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Padding(padding: const EdgeInsets.all(8.0),
+          child: Text(
+            //에러일경우 에러메세지 출력
+            'Error ${snapshot.error}',
+            style: TextStyle(fontSize: 15)
+            ),
+          );
+        } else {
+          //데이터를 정상적으로 받아올경우
+          List<ZandiInfoData> ZandiData = snapshot.data!.map((d) => ZandiInfoData(date: d.date, stack: d.stack)).toList();
 
-    int maxStreakSize = 35;
-    List<ZandiInfoConvert> converted = ZandiData.map((d) => ZandiInfoConvert(date: (today.difference(d.date).inDays), stack: d.stack)).toList();
-    List<bool> items = List.generate(maxStreakSize, (idx) => false);
+          //연속일자 값 저장
+          currentStack = ZandiData[ZandiData.length-1].stack;
 
-    int idx = 0;
-    label : for(final d in converted) {
-      idx = d.date;
-      for(int i = 0; i < d.stack; i++) {
-        if(idx >= maxStreakSize) break label;
-        items[idx] = true;
-        idx++;
+          int maxStreakSize = 35;
+          List<ZandiInfoConvert> converted = ZandiData.map((d) => ZandiInfoConvert(date: (today.difference(d.date).inDays), stack: d.stack)).toList();
+          List<bool> items = List.generate(maxStreakSize, (idx) => false);
+            
+          int idx = 0;
+          label : for(final d in converted) {
+            idx = d.date;
+            for(int i = 0; i < d.stack; i++) {
+              if(idx >= maxStreakSize) break label;
+                items[idx] = true;
+                idx++;
+            }
+          }
+
+          //테이블 그리기
+          return Table(
+            border: TableBorder.all(),
+            children: List<TableRow>.generate(5, (rowIndex) {
+              return TableRow(
+                children: List<Widget>.generate(7, (colIndex) {
+                  int itemIndex = rowIndex * 7 + colIndex;
+                  // 리스트의 빈값에 false초기화
+                  bool item = itemIndex < items.length ? items[itemIndex] : false;
+                  bool isFirstItem = itemIndex == 0;
+                  return Container(
+                    width: cellSize,
+                    height: screenHeight,
+                    alignment: Alignment.center,
+                    color: isFirstItem ? Colors.yellow : Colors.white,
+                    child: Icon(
+                      item ? Icons.check : Icons.close,
+                      color: item ? Colors.green : Colors.red,
+                    ),
+                  );
+                }),
+               );
+            }),
+          );
+        }
       }
-    }
-    
-    //테이블 그리기
-    return Table(
-      border: TableBorder.all(),
-      children: List<TableRow>.generate(5, (rowIndex) {
-        return TableRow(
-          children: List<Widget>.generate(7, (colIndex) {
-            int itemIndex = rowIndex * 7 + colIndex;
-            // 리스트의 빈값에 false초기화
-            bool item = itemIndex < items.length ? items[itemIndex] : false;
-            bool isFirstItem = itemIndex == 0;
-            return Container(
-              width: cellSize,
-              height: screenHeight,
-              alignment: Alignment.center,
-              color: isFirstItem ? Colors.yellow : Colors.white,
-              child: Icon(
-                item ? Icons.check : Icons.close,
-                color: item ? Colors.green : Colors.red,
-              ),
-            );
-          }),
-        );
-      }),
     );
   }
 }
@@ -109,7 +135,7 @@ class _HistoryViewState extends State<HistoryView> {
             Container(width: double.infinity, child: Text("연속$currentStack일 진행중입니다")),
             Container(width: double.infinity, padding: EdgeInsets.only(left: 5+MediaQuery.of(context).size.width/20,top:10), child: Text(style: TextStyle(fontSize: MediaQuery.of(context).size.width*0.3/15),"Today")),
             Container(padding: EdgeInsets.only(left:10,right: 10), child: CustomTable()),
-            Container(padding: EdgeInsets.only(top: 10), width: double.infinity, child: Text("최대스택: $getMaxStack()")),
+            Container(padding: EdgeInsets.only(top: 10), width: double.infinity, child: Text("최대스택: $maxstack")),
             TextButton(onPressed:(){  Navigator.push(context, MaterialPageRoute(builder: (context) => const MoreHistoryView(),));}, child: Text("더보기")),
             Container(padding: EdgeInsets.only(top:50), child: Image.asset('assets/images/crown.png',height: 128,width: 128))
           ],
