@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/material.dart';
 import 'package:time_boxing/Calendar.dart';
@@ -6,10 +8,13 @@ import 'package:time_boxing/Home.dart';
 import 'package:time_boxing/Setting.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await DesktopWindow.setWindowSize(const Size(500, 600)); // 기본 크기
-  await DesktopWindow.setMinWindowSize(const Size(300, 400)); // 최소 크기
-	// await DesktopWindow.setMaxWindowSize(const Size(1500, 1200)); // 최대 크기
+  // if(Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
+  //   WidgetsFlutterBinding.ensureInitialized();
+  //   await DesktopWindow.setWindowSize(const Size(500, 600)); // 기본 크기
+  //   await DesktopWindow.setMinWindowSize(const Size(300, 400)); // 최소 크기
+  //   // await DesktopWindow.setMaxWindowSize(const Size(1500, 1200)); // 최대 크기
+  // }
+  
   runApp(const MyApp());
 }
 

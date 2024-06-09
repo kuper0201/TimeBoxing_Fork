@@ -306,14 +306,13 @@ class _PlanViewState extends State<PlanView> {
                   } else {
                     final recentZandi = await db.zandiRepository.selectRecentData();
                     if(recentZandi.isEmpty) {
-                      await db.zandiRepository.insertZandiInfo_FirstTime(onlyDate);
+                      await db.zandiRepository.insertZaniInfo(onlyDate);
                     } else {
                       // 어제면 스택 올림
                       if(recentZandi[0].date.compareTo(onlyDate.subtract(const Duration(days: 1))) == 0) {
                         await db.zandiRepository.updateZandiInfo(recentZandi[0].date, recentZandi[0].stack + 1);
-                      } else { // 아니면 오늘 추가후 1 설정
-                        await db.zandiRepository.insertZandiInfo_FirstTime(onlyDate);
-                        await db.zandiRepository.updateZandiInfo(onlyDate, 1);
+                      } else { // 아니면 오늘 추가
+                        await db.zandiRepository.insertZaniInfo(onlyDate);
                       }
                     }
                   }
