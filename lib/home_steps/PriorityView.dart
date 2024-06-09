@@ -12,8 +12,6 @@ class PriorityView extends StatefulWidget {
 }
 
 class _PriorityViewState extends State<PriorityView> {
-  int currentPriority = 0;
-
   @override
   void initState() {
     SystemChannels.textInput.invokeMethod('TextInput.hide');
@@ -45,13 +43,15 @@ class _PriorityViewState extends State<PriorityView> {
                 String name = widget.nameList[index];
                 return GestureDetector(
                   onTap: () {
-                    setState(() {
-                      if(widget.priority.contains(name)) {
+                    if(widget.priority.contains(name)) {
+                      setState(() {
                         widget.priority.remove(name);
-                      } else if(widget.priority.length < 3) {
+                      });
+                    } else if(widget.priority.length < 3) {
+                      setState(() {
                         widget.priority.add(name);
-                      }
-                    });
+                      });
+                    }
                   },
                   child: Card(
                     child: ListTile(

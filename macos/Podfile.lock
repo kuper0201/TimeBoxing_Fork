@@ -1,4 +1,6 @@
 PODS:
+  - desktop_window (0.0.1):
+    - FlutterMacOS
   - FlutterMacOS (1.0.0)
   - path_provider_foundation (0.0.1):
     - Flutter
@@ -20,6 +22,7 @@ PODS:
     - sqlite3/rtree
 
 DEPENDENCIES:
+  - desktop_window (from `Flutter/ephemeral/.symlinks/plugins/desktop_window/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
   - path_provider_foundation (from `Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin`)
   - sqlite3_flutter_libs (from `Flutter/ephemeral/.symlinks/plugins/sqlite3_flutter_libs/macos`)
@@ -29,6 +32,8 @@ SPEC REPOS:
     - sqlite3
 
 EXTERNAL SOURCES:
+  desktop_window:
+    :path: Flutter/ephemeral/.symlinks/plugins/desktop_window/macos
   FlutterMacOS:
     :path: Flutter/ephemeral
   path_provider_foundation:
@@ -37,6 +42,7 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/sqlite3_flutter_libs/macos
 
 SPEC CHECKSUMS:
+  desktop_window: fb7c4f12c1129f947ac482296b6f14059d57a3c3
   FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   sqlite3: 154b084339ede06960a5b3c8160066adc9176b7d
