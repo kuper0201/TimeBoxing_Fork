@@ -48,4 +48,9 @@ class TimeBoxingRepository extends ChangeNotifier {
 
     return query.get();
   }
+
+    Future<List<TimeBoxingInfoData>> selectPriority(DateTime date) {
+    final result = (_myDatabase.select(_myDatabase.timeBoxingInfo)..where((t) => t.date.equals(date) & t.priority.equals(-1).not())).get();
+    return result;
+  }
 }

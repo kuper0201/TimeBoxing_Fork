@@ -2,9 +2,8 @@ import 'package:flutter/rendering.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart' as CV; // 캘린더
 import 'package:flutter/material.dart';
 import 'package:time_boxing/DB/database.dart';
-
-import 'calendar_steps/FlushView.dart';
-import 'DB/repositoryForTimeBoxing.dart';
+import 'package:time_boxing/home_steps/data/PlanTime.dart';
+import 'calendar_steps/StepViewPage.dart';
 
 class CalendarView extends StatefulWidget {
   const CalendarView({super.key});
@@ -13,6 +12,7 @@ class CalendarView extends StatefulWidget {
   State<CalendarView> createState() => _CalendarViewState();
 }
 
+ Mydatabase mydb = Mydatabase.instance;
 
 class _CalendarViewState extends State<CalendarView> {
   DateTime selectedDay = DateTime(
@@ -30,7 +30,10 @@ class _CalendarViewState extends State<CalendarView> {
   // }
 
   Future<List<TimeBoxingInfoData>> fetchFromDB() async {
-    Mydatabase mydb = Mydatabase.instance;
+    return mydb.timeBoxingRepository.selectPriority(selectedDay);
+  }
+
+   Future<List<TimeBoxingInfoData>> getAllPlan() async {
     return mydb.timeBoxingRepository.selectTimeBoxing(selectedDay);
   }
 
@@ -50,7 +53,7 @@ class _CalendarViewState extends State<CalendarView> {
               });
             },
           ),
-          FutureBuilder(
+          Expanded(child:FutureBuilder(
             future: fetchFromDB(),
             builder: (context, snapshot) {
               if(!snapshot.hasData) {
@@ -58,14 +61,16 @@ class _CalendarViewState extends State<CalendarView> {
               } 
               else if(snapshot.data!.isNotEmpty) {
                 return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Expanded(
                       flex: 7,
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Expanded(child:Text(snapshot.data![0].task)),
-                          Expanded(child:Text(snapshot.data![1].task)),
-                          Expanded(child:Text(snapshot.data![2].task)),
+                          Expanded(child:Card(child: Center(child: Text(textAlign: TextAlign.center, "Priority 1\n${snapshot.data![0].task}")))),
+                          Expanded(child:Card(child: Center(child: Text(textAlign: TextAlign.center, "Priority 2\n${snapshot.data![1].task}")))),
+                          Expanded(child:Card(child: Center(child: Text(textAlign: TextAlign.center, "Priority 3\n${snapshot.data![2].task}")))),
                         ]
                       )
                     ),
@@ -73,10 +78,34 @@ class _CalendarViewState extends State<CalendarView> {
                       flex: 3,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(), 
-                        onPressed:(){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const FlushView(),));
+                        onPressed:() async{
+                          List<String> nameList = [];
+                            List<String> priority = [];
+                            Map<String, DateTime> startTime = {};
+                            Map<String, DateTime> endTime = {};
+                            List<PlanTime> planList = [];
+
+                            final selAll = await getAllPlan();
+                            for(final it in selAll) {
+                              nameList.add(it.task);
+                              
+                              if(it.priority != -1) {
+                                priority.add(it.task);
+                              }
+
+                              startTime[it.task] = DateTime(selectedDay.year, selectedDay.month, selectedDay.day, it.startTime ~/ 60, it.startTime % 60);
+                              endTime[it.task] = DateTime(selectedDay.year, selectedDay.month, selectedDay.day, it.endTime ~/ 60, it.endTime % 60);
+
+                              planList.add(PlanTime(title: it.task, description: "", start: startTime[it.task]!, end: endTime[it.task]!));
+                            }
+
+                            if(context.mounted) {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => StepViewPage(nameList, priority, startTime, endTime, planList, selectedDay))).then((v) {
+                                setState(() {});
+                              });
+                            }
                         },
-                        child: const Text("flush")
+                        child: const Text("전체일정 보기")
                       )
                     ),
                   ],
@@ -85,7 +114,7 @@ class _CalendarViewState extends State<CalendarView> {
                 return Expanded(child: Container());
               }
             }
-          )
+          ))
         ]
       )
     );

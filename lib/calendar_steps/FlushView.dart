@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:time_boxing/home_steps/data/PlanTime.dart';
 
 class FlushView extends StatefulWidget {
-  const FlushView({super.key});
+  final List<String> nameList;
+  final List<String> priority;
+  final List<PlanTime> planList;
+  final PageController pc;
+  const FlushView({super.key, required this.nameList, required this.priority, required this.planList, required this.pc});
 
   @override
   State<FlushView> createState() => _FlushViewState();
@@ -9,7 +14,6 @@ class FlushView extends StatefulWidget {
 
 class _FlushViewState extends State<FlushView> {
   List<String> nameList = [];
-  TextEditingController tc = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -25,32 +29,30 @@ class _FlushViewState extends State<FlushView> {
             child: ListView.builder(
               scrollDirection: Axis.vertical,
               padding: const EdgeInsets.all(3),
-              itemCount: nameList.length + 1,
+              itemCount: widget.nameList.length,
               itemBuilder: (BuildContext context, int index) {
-                if(nameList.length == index) {
-                  return Card(
+                return Card(
                     child: ListTile(
-                      title: Expanded(child: Padding(padding: const EdgeInsets.only(left: 10), child: TextField(autofocus: true, controller: tc,))),
-                    )
-                  );
-                } else {
-                  return Card(
-                    child: ListTile(
-                      title: Expanded(child: Padding(padding: const EdgeInsets.only(left: 10), child: Text(nameList[index], style: const TextStyle(fontSize: 21)))),
-                      trailing: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            nameList.removeAt(index);
-                          });
-                        },
-                        icon: const Icon(Icons.delete_forever, color: Colors.red,)
-                      )
-                    )
-                  );
-                }
+                      title: Padding(padding: const EdgeInsets.only(left: 10), child: Text(widget.nameList[index], style: const TextStyle(fontSize: 21))),
+                  )
+                );
               }
             )
           ),
+           Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: OutlinedButton(
+                    onPressed: () {
+                      widget.pc.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.ease);
+                    },
+                    child: const Text("다음"))
+                )
+              )
+            ],
+          )
         ],
       )
     );

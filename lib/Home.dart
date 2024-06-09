@@ -38,6 +38,7 @@ class _HomeViewState extends State<HomeView> {
     return num.toString().padLeft(2, '0');
   }
 
+ //일정 있을때
   Widget buildPlanTile(TimeBoxingInfoData? data) {
     if(data == null) {
       return const Card(
