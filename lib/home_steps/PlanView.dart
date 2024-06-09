@@ -34,7 +34,7 @@ class _PlanViewState extends State<PlanView> {
   GlobalKey gk = GlobalKey();
   GlobalKey listGK = GlobalKey();
 
-  List<Color> colors = [const Color.fromARGB(255, 171, 222, 230), const Color.fromARGB(255, 203, 170, 203), const Color.fromARGB(255, 255, 255, 181), Color.fromARGB(255, 255, 204, 182), Color.fromARGB(255, 243, 176, 195)];
+  List<Color> colors = [const Color.fromARGB(255, 171, 222, 230), const Color.fromARGB(255, 203, 170, 203), const Color.fromARGB(255, 255, 204, 182), const Color.fromARGB(255, 243, 176, 195)];
   final random = Random();
   List<ExpansionTileController> expansionControllers = [];
   ScrollController scrollController = ScrollController();
@@ -163,24 +163,31 @@ class _PlanViewState extends State<PlanView> {
 
   @override
   void initState() {
+    // 키보드 숨기기
     SystemChannels.textInput.invokeMethod('TextInput.hide');
     
+    // Expansion 컨트롤러 생성
     expansionControllers = List<ExpansionTileController>.generate(widget.nameList.length, (index) => ExpansionTileController());
+    
+    // 데스크톱 OS에서는 tap으로 드래그 & 드롭
     if(Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
       dg = DragStartingGesture.tap;
     }
 
+    // 다크모드 설정 변수
     var brightness = SchedulerBinding.instance.platformDispatcher.platformBrightness;
-    isDarkMode = brightness == Brightness.dark;
+    isDarkMode = (brightness == Brightness.dark);
     super.initState();
   }
   
   @override
   Widget build(BuildContext context) {
+    // 우선순위 지정된 일정은 nameList에서 제거
     for(final p in widget.priority) {
       widget.nameList.remove(p);
     }
 
+    // nameList의 첫 번째 부분에 우선순위 일정 삽입
     widget.nameList.insertAll(0, widget.priority);
 
     return Scaffold(
@@ -213,11 +220,12 @@ class _PlanViewState extends State<PlanView> {
               children: [
                 Container(
                   child: DayView(
-                    currentTimeIndicatorBuilder:(dayViewStyle, topOffsetCalculator, hoursColumnWidth, isRtl) {},
+                    currentTimeIndicatorBuilder: (_, __, ___, ____) {},
                     userZoomable: false,
                     events: widget.planList,
                     date: DateTime.now(),
                     style: const DayViewStyle(headerSize: 0),
+                    // 드래그 앤 드랍으로 일정 이동
                     dragAndDropOptions: DragAndDropOptions(
                       startingGesture: dg,
                       onEventMove: (event, _) {
@@ -239,6 +247,7 @@ class _PlanViewState extends State<PlanView> {
                         });
                       },
                     ),
+                    // 드래그 앤 드랍으로 일정 길이 수정
                     resizeEventOptions: ResizeEventOptions(
                       snapToGridGranularity: const Duration(minutes: 15),
                       onEventResizeMove: (event, newEndTime) {

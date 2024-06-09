@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter_week_view/flutter_week_view.dart';
 import 'package:equatable/equatable.dart';
 

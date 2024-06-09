@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:time_boxing/DB/database.dart';
 import 'package:time_boxing/home_steps/StepViewPage.dart';
@@ -29,6 +30,11 @@ class _HomeViewState extends State<HomeView> {
     return db.timeBoxingRepository.selectTimeBoxing(now);
   }
 
+  Future<List<TimeBoxingInfoData>> selectPriority() async {
+    DateTime now = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    return db.timeBoxingRepository.selectPriority(now);
+  }
+
   // 실시간 처리
   // Timer? tp;
   // @override
@@ -56,7 +62,7 @@ class _HomeViewState extends State<HomeView> {
       lst.add(
         const Card(
           child: ListTile(
-            title: Text("일정이 없습니다.")
+            title: AutoSizeText("일정이 없습니다.", maxLines: 1,)
           )
         )
       );
@@ -68,12 +74,12 @@ class _HomeViewState extends State<HomeView> {
       lst.add(
         Card(
           child: ListTile(
-            title: Text(it.task, style: const TextStyle(fontSize: 20)),
+            title: AutoSizeText(it.task, maxLines: 2,),
             subtitle: Row(
               children: [
-                Text("${leadingZero(it.startTime ~/ 60)}:${leadingZero(it.startTime % 60)}", style: const TextStyle(fontSize: 18)),
+                AutoSizeText("${leadingZero(it.startTime ~/ 60)}:${leadingZero(it.startTime % 60)}", style: const TextStyle(fontSize: 18), maxLines: 1,),
                 const Text("     "),
-                Text("${leadingZero(it.endTime ~/ 60)}:${leadingZero(it.endTime % 60)}", style: const TextStyle(fontSize: 18))
+                AutoSizeText("${leadingZero(it.endTime ~/ 60)}:${leadingZero(it.endTime % 60)}", style: const TextStyle(fontSize: 18), maxLines: 1,)
               ],
             )
           )
@@ -82,6 +88,36 @@ class _HomeViewState extends State<HomeView> {
     }
 
     return lst;
+  }
+
+  Widget buildPriorityTile(List<TimeBoxingInfoData> data) {
+    List<Widget> lst = [];
+    for(final it in data) {
+      int stHour = it.startTime ~/ 60;
+      int stMin = it.startTime % 60;
+      int endHour = it.endTime ~/ 60;
+      int endMin = it.endTime % 60;
+
+      lst.add(
+        Expanded(
+          child: Card(
+            child: ListTile(
+              title: Center(child: AutoSizeText(it.task, maxLines: 2)),
+              subtitle: Wrap(
+                spacing: 10,
+                alignment: WrapAlignment.center,
+                runAlignment: WrapAlignment.center,
+                children: [
+                  AutoSizeText("${stHour.toString().padLeft(2, '0')}:${stMin.toString().padLeft(2, "0")}", maxLines: 1),
+                  AutoSizeText("${endHour.toString().padLeft(2, '0')}:${endMin.toString().padLeft(2, "0")}", maxLines: 1)
+                ]
+              )
+            )
+          )
+        )
+      );
+    }
+    return Row(children: lst);
   }
 
   Widget buildSizedBox(String display) {
@@ -96,6 +132,9 @@ class _HomeViewState extends State<HomeView> {
     return SingleChildScrollView(
       child: Column(
         children: [
+          buildSizedBox("우선순위 일정"),
+          buildPriorityTile(snapshot.data![3]),
+
           buildSizedBox("현재 일정"),
           for(final widget in buildPlanTile(snapshot.data![0]))
             widget,
@@ -196,7 +235,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Future.wait([selectCurrentTimeBox(), selectNextTimeBox(), selectAllTimeBox()]),
+      future: Future.wait([selectCurrentTimeBox(), selectNextTimeBox(), selectAllTimeBox(), selectPriority()]),
       builder: (context, snapshot) {
         if(!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
