@@ -75,7 +75,7 @@ class CustomTable extends StatelessWidget {
 
           int idx = 0;
           label : for(final d in converted) {
-            idx = d.date;
+            idx = d.date - d.stack + 1;
             for(int i = 0; i < d.stack; i++) {
               if(idx >= maxStreakSize) break label;
               items[idx] = true;
@@ -88,6 +88,7 @@ class CustomTable extends StatelessWidget {
 
           if(maxStreakSize==0) {
             tableRowCount = maxStreakSize+1;
+            items[1] == true;
           } else {
             tableRowCount = (maxStreakSize/7).ceil();
           }
