@@ -44,8 +44,8 @@ class CustomTable extends StatelessWidget {
     double cellSize = MediaQuery.of(context).size.width/10; // 칸의 크기를 화면 너비의 1/10로 설정
     double screenHeight = MediaQuery.of(context).size.height*0.3/5;
 
-    return FutureBuilder<List<ZandiInfoData>> (
-      future: getzaniAll(),
+    return FutureBuilder (
+      future: Future.wait([getzaniAll(),getzaniMostLate()]),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           //로딩 애니메이션
@@ -60,29 +60,11 @@ class CustomTable extends StatelessWidget {
           );
         } else {
           //데이터를 정상적으로 받아올경우
-          List<ZandiInfoData> ZandiData = snapshot.data!.map((d) => ZandiInfoData(date: d.date, stack: d.stack)).toList();
-
-          //최대연속값 저장
-          getzaniMostLate().then((value) {
-            targetDate = value;
-          }, onError: (error,stackstrace) {
-            
-          }); 
+          List<ZandiInfoData> ZandiData = snapshot.data![0] as List<ZandiInfoData>;
+          targetDate = snapshot.data![1] as DateTime;
 
           int maxStreakSize = today.difference(targetDate).inDays; //getZandiMostLate - datetime.now()
           List<ZandiInfoConvert> converted = ZandiData.map((d) => ZandiInfoConvert(date: (today.difference(d.date).inDays), stack: d.stack)).toList();
-          List<bool> items = List.generate(maxStreakSize, (idx) => false);
-
-          int idx = 0;
-          label : for(final d in converted) {
-            idx = d.date;
-            for(int i = 0; i < d.stack; i++) {
-              if(idx >= maxStreakSize) break label;
-              items[idx] = true;
-              idx++;
-            }
-          }
-
           //table row check
           int tableRowCount = 0;
 
@@ -90,6 +72,21 @@ class CustomTable extends StatelessWidget {
             tableRowCount = maxStreakSize+1;
           } else {
             tableRowCount = (maxStreakSize/7).ceil();
+          }
+
+          //maxStreakSize is tableRowCount*7
+          maxStreakSize = tableRowCount*7;
+
+          List<bool> items = List.generate(maxStreakSize, (_) => false);
+          
+          int idx = 0;
+          label : for(final d in converted) {
+            idx = d.date - d.stack + 1;
+            for(int i = 0; i < d.stack; i++) {
+              if(idx >= maxStreakSize) break label;
+              items[idx] = true;
+              idx++;
+            }
           }
           
           //테이블 그리기
@@ -100,21 +97,17 @@ class CustomTable extends StatelessWidget {
                 children: List<Widget>.generate(7, (colIndex) {
                   int itemIndex = rowIndex * 7 + colIndex;
                   // 리스트의 빈값에 false초기화
-                  bool? item = itemIndex < items.length ? items[itemIndex] : null;
+                  bool item = itemIndex < items.length ? items[itemIndex] : false;
                   bool isFirstItem = itemIndex == 0;
                   return Container(
                     width: cellSize,
                     height: screenHeight,
                     alignment: Alignment.center,
                     color: isFirstItem ? Colors.yellow : Colors.white,
-                    child:
-                      item != null ? Icon(
+                    child: Icon(
                       item ? Icons.check : Icons.close,
                       color: item ? Colors.green : Colors.red,
-                      ) : Icon(
-                      Icons.question_mark,
-                      color: Colors.white,
-                      ),
+                    ),
                   );
                 }),
               );
