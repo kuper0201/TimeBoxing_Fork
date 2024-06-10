@@ -64,18 +64,39 @@ class _CalendarViewState extends State<CalendarView> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Expanded(
-                      flex: 7,
+                      flex: 8,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Expanded(child:Card(child: Center(child: Text(textAlign: TextAlign.center, "Priority 1\n${snapshot.data![0].task}")))),
-                          Expanded(child:Card(child: Center(child: Text(textAlign: TextAlign.center, "Priority 2\n${snapshot.data![1].task}")))),
-                          Expanded(child:Card(child: Center(child: Text(textAlign: TextAlign.center, "Priority 3\n${snapshot.data![2].task}")))),
+                          Expanded(
+                            child:Card(
+                              child:ListTile(
+                                title: Text("Priority 1", textAlign: TextAlign.center,),
+                                subtitle: Text(snapshot.data![0].task, style: TextStyle(fontSize:20),textAlign: TextAlign.center,)
+                              )
+                            )
+                          ),
+                          Expanded(
+                            child:Card(
+                              child:ListTile(
+                                title: Text("Priority 2", textAlign: TextAlign.center,),
+                                subtitle: Text(snapshot.data![1].task, style: TextStyle(fontSize:20),textAlign: TextAlign.center,)
+                              )
+                            )
+                          ),
+                          Expanded(
+                            child:Card(
+                              child:ListTile(
+                                title: Text("Priority 3", textAlign: TextAlign.center,),
+                                subtitle: Text(snapshot.data![2].task, style: TextStyle(fontSize:20),textAlign: TextAlign.center,)
+                              )
+                            )
+                          ),
                         ]
                       )
                     ),
                     Expanded(
-                      flex: 3,
+                      flex: 2,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(), 
                         onPressed:() async{
