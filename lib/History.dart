@@ -52,15 +52,8 @@ Future<List<ZandiInfoData>> getZandi35Ago() async {
     double cellSize = MediaQuery.of(context).size.width/10; // 칸의 크기를 화면 너비의 1/10로 설정
     double screenHeight = MediaQuery.of(context).size.height*0.3/5;
 
-    //최대연속값 저장
-    getMaxStack().then((value) {
-        maxstack = value;
-    }, onError: (error,stackstrace) {
-      maxstack = 19981225;
-    }); 
-
-    return FutureBuilder<List<ZandiInfoData>>(
-      future: getZandi35Ago(),
+    return FutureBuilder (
+      future: Future.wait([getZandi35Ago(), getMaxStack()]),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           //로딩 애니메이션
@@ -75,11 +68,13 @@ Future<List<ZandiInfoData>> getZandi35Ago() async {
           );
         } else {
           //데이터를 정상적으로 받아올경우
-          List<ZandiInfoData> ZandiData = snapshot.data!.map((d) => ZandiInfoData(date: d.date, stack: d.stack)).toList();
+          List<ZandiInfoData> ZandiData = snapshot.data![0] as List<ZandiInfoData>;
+          maxstack = snapshot.data![1] as int;
 
-          //연속일자 값 저장 최근값이 오늘날짜인지 확인
-          if((ZandiData[ZandiData.length-1].date)==today) {
-              currentStack = ZandiData[ZandiData.length-1].stack; 
+
+          //연속일자 값 저장 최근값이 오늘날짜인지 확인 list.first.date에 현재스택값-1 값 더한값이 오늘이랑 같을경우 연속일자 가져옴
+          if((ZandiData[ZandiData.length-1].date.add(Duration(days: ZandiData[ZandiData.length-1].stack - 1)))==today) {
+              currentStack = ZandiData[ZandiData.length-1].stack;
           }
 
           int maxStreakSize = 35;
