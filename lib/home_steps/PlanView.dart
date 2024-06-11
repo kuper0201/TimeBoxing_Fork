@@ -297,6 +297,29 @@ class _PlanViewState extends State<PlanView> {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () async {
+                  // 예외 처리
+                  if(widget.planList.length != widget.nameList.length) {
+                    await showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Alert'),
+                          content: const Text('모든 일정의 시간을 작성하세요.'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('확인'),
+                            ),
+                          ],
+                        );
+                      }
+                    );
+
+                    return;
+                  }
+
                   // DB 저장
                   DateTime now = DateTime.now();
                   DateTime onlyDate = DateTime(now.year, now.month, now.day);
