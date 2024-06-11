@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:time_boxing/DB/database.dart';
 import 'package:time_boxing/home_steps/StepViewPage.dart';
 import 'package:time_boxing/home_steps/data/PlanTime.dart';
+import 'package:word_break_text/word_break_text.dart';
 import 'package:wrapped_korean_text/wrapped_korean_text.dart';
 
 class HomeView extends StatefulWidget {
@@ -109,7 +110,7 @@ class _HomeViewState extends State<HomeView> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(child: Center(child: WrappedKoreanText(it.task, textAlign: TextAlign.center))),
+                  Expanded(child: Center(child: WordBreakText(it.task, textAlign: TextAlign.center, wrapAlignment: WrapAlignment.center))),
                   Expanded(
                     child: Wrap(
                       spacing: 10,
