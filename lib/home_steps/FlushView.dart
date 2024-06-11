@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:time_boxing/home_steps/data/PlanTime.dart';
 
 class FlushView extends StatefulWidget {
@@ -13,41 +14,52 @@ class FlushView extends StatefulWidget {
 }
 
 class _FlushViewState extends State<FlushView> {
-  TextEditingController textEditController = TextEditingController();
-  FocusNode focusNode = FocusNode();
+  late TextEditingController textEditController;
 
-  Widget getButton() {
-    return Container(
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.lightGreen,
-      ),
-      child: IconButton(
-        onPressed: () {
-          if(!widget.nameList.contains(textEditController.text)) {
-            if(textEditController.text.isNotEmpty) {
-              setState(() {
-                widget.nameList.add(textEditController.text);
-                textEditController.clear();  
-              });
-            }
-          }
-        },
-        icon: const Icon(Icons.add),
-      ),
-    );
+  @override
+  void initState() {
+    textEditController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    textEditController.dispose();
+    super.dispose();
   }
 
   Widget getTextInputItem() {
     return Card(
       child: ListTile(
-        title: Padding(padding: const EdgeInsets.only(left: 10), child: 
-        Row(
-          children: [
-            Expanded(flex: 8, child: TextField(autofocus: true, controller: textEditController, decoration: const InputDecoration(hintText: "일정을 입력하세요"), focusNode: focusNode)),
-            Expanded(flex: 2, child: getButton())
-          ]
-        )
+        title: Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: Row(
+            children: [
+              Expanded(flex: 8, child: TextField(autofocus: true, controller: textEditController, decoration: const InputDecoration(hintText: "일정을 입력하세요"))),
+              Expanded(
+                flex: 2,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.lightGreen,
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      if(!widget.nameList.contains(textEditController.text)) {
+                        if(textEditController.text.isNotEmpty) {
+                          setState(() {
+                            widget.nameList.add(textEditController.text);
+                            textEditController.clear();
+                          });
+                        }
+                      }
+                    },
+                    icon: const Icon(Icons.add),
+                  ),
+                )
+              )
+            ]
+          )
         )
       )
     );
