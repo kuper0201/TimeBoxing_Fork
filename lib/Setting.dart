@@ -1,9 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:time_boxing/DB/database.dart';
-
-Mydatabase db = Mydatabase.instance;
-
-
 
 class SettingView extends StatefulWidget {
   const SettingView({super.key});
