@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:time_boxing/DB/database.dart';
 import 'package:time_boxing/home_steps/StepViewPage.dart';
 import 'package:time_boxing/home_steps/data/PlanTime.dart';
+import 'package:wrapped_korean_text/wrapped_korean_text.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -16,6 +16,7 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   Mydatabase db = Mydatabase.instance;
   TimeBoxingInfoData? current;
+  GlobalKey gk = GlobalKey();
 
   Future<List<TimeBoxingInfoData>> selectNextTimeBox() async {
     return db.timeBoxingRepository.selectNextTime(DateTime.now());
@@ -63,7 +64,7 @@ class _HomeViewState extends State<HomeView> {
       lst.add(
         const Card(
           child: ListTile(
-            title: AutoSizeText("일정이 없습니다.", maxLines: 1,)
+            title: Text("일정이 없습니다.", maxLines: 1,)
           )
         )
       );
@@ -75,12 +76,12 @@ class _HomeViewState extends State<HomeView> {
       lst.add(
         Card(
           child: ListTile(
-            title: AutoSizeText(it.task, maxLines: 2,),
+            title: Text(it.task, maxLines: 2,),
             subtitle: Row(
               children: [
-                AutoSizeText("${leadingZero(it.startTime ~/ 60)}:${leadingZero(it.startTime % 60)}", style: const TextStyle(fontSize: 18), maxLines: 1,),
+                Text("${leadingZero(it.startTime ~/ 60)}:${leadingZero(it.startTime % 60)}", style: const TextStyle(fontSize: 18), maxLines: 1,),
                 const Text("     "),
-                AutoSizeText("${leadingZero(it.endTime ~/ 60)}:${leadingZero(it.endTime % 60)}", style: const TextStyle(fontSize: 18), maxLines: 1,)
+                Text("${leadingZero(it.endTime ~/ 60)}:${leadingZero(it.endTime % 60)}", style: const TextStyle(fontSize: 18), maxLines: 1,)
               ],
             )
           )
@@ -102,15 +103,24 @@ class _HomeViewState extends State<HomeView> {
       lst.add(
         Expanded(
           child: Card(
-            child: ListTile(
-              title: Center(child: AutoSizeText(it.task, maxLines: 2)),
-              subtitle: Wrap(
-                spacing: 10,
-                alignment: WrapAlignment.center,
-                runAlignment: WrapAlignment.center,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10, left: 8, right: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  AutoSizeText("${stHour.toString().padLeft(2, '0')}:${stMin.toString().padLeft(2, "0")}", maxLines: 1),
-                  AutoSizeText("${endHour.toString().padLeft(2, '0')}:${endMin.toString().padLeft(2, "0")}", maxLines: 1)
+                  Expanded(child: Center(child: WrappedKoreanText(it.task, textAlign: TextAlign.center))),
+                  Expanded(
+                    child: Wrap(
+                      spacing: 10,
+                      alignment: WrapAlignment.center,
+                      runAlignment: WrapAlignment.center,
+                      children: [
+                        Text("${stHour.toString().padLeft(2, '0')}:${stMin.toString().padLeft(2, "0")}", maxLines: 1, textAlign: TextAlign.center),
+                        Text("${endHour.toString().padLeft(2, '0')}:${endMin.toString().padLeft(2, "0")}", maxLines: 1, textAlign: TextAlign.center)
+                      ]
+                    )
+                  )
                 ]
               )
             )
@@ -118,7 +128,7 @@ class _HomeViewState extends State<HomeView> {
         )
       );
     }
-    return Row(children: lst);
+    return IntrinsicHeight(child: Row(key: gk, crossAxisAlignment: CrossAxisAlignment.center, children: lst));
   }
 
   Widget buildSizedBox(String display) {
@@ -135,6 +145,7 @@ class _HomeViewState extends State<HomeView> {
         children: [
           buildSizedBox("우선순위 일정"),
           buildPriorityTile(snapshot.data![3]),
+          
 
           buildSizedBox("현재 일정"),
           for(final widget in buildPlanTile(snapshot.data![0]))
