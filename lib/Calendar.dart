@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/rendering.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart' as CV; // 캘린더
 import 'package:flutter/material.dart';
@@ -106,6 +108,10 @@ class _CalendarViewState extends State<CalendarView> {
                             Map<String, DateTime> endTime = {};
                             List<PlanTime> planList = [];
 
+                            List<Color> colors = [const Color.fromARGB(255, 171, 222, 230), const Color.fromARGB(255, 203, 170, 203), const Color.fromARGB(255, 255, 255, 181), Color.fromARGB(255, 255, 204, 182), Color.fromARGB(255, 243, 176, 195)];
+                            final random = Random();
+
+  
                             final selAll = await getAllPlan();
                             for(final it in selAll) {
                               nameList.add(it.task);
@@ -117,7 +123,7 @@ class _CalendarViewState extends State<CalendarView> {
                               startTime[it.task] = DateTime(selectedDay.year, selectedDay.month, selectedDay.day, it.startTime ~/ 60, it.startTime % 60);
                               endTime[it.task] = DateTime(selectedDay.year, selectedDay.month, selectedDay.day, it.endTime ~/ 60, it.endTime % 60);
 
-                              planList.add(PlanTime(title: it.task, description: "", start: startTime[it.task]!, end: endTime[it.task]!));
+                              planList.add(PlanTime(title: it.task, description: "", start: startTime[it.task]!, end: endTime[it.task]!,backgroundColor: colors[random.nextInt(colors.length)]));
                             }
 
                             if(context.mounted) {
