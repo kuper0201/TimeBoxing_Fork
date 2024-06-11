@@ -5,7 +5,6 @@ import 'package:time_boxing/DB/database.dart';
 import 'package:time_boxing/home_steps/StepViewPage.dart';
 import 'package:time_boxing/home_steps/data/PlanTime.dart';
 import 'package:word_break_text/word_break_text.dart';
-import 'package:wrapped_korean_text/wrapped_korean_text.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
