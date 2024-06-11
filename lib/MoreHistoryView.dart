@@ -97,16 +97,20 @@ class CustomTable extends StatelessWidget {
                 children: List<Widget>.generate(7, (colIndex) {
                   int itemIndex = rowIndex * 7 + colIndex;
                   // 리스트의 빈값에 false초기화
-                  bool item = itemIndex < items.length ? items[itemIndex] : false;
+                  bool ?item = itemIndex < items.length ? items[itemIndex] : null;
                   bool isFirstItem = itemIndex == 0;
                   return Container(
                     width: cellSize,
                     height: screenHeight,
                     alignment: Alignment.center,
                     color: isFirstItem ? Colors.yellow : Colors.white,
-                    child: Icon(
+                    child:
+                    item != null ? Icon(
                       item ? Icons.check : Icons.close,
                       color: item ? Colors.green : Colors.red,
+                      ) : Icon(
+                      Icons.question_mark,
+                      color: Colors.white,
                     ),
                   );
                 }),
