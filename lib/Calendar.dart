@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/rendering.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart' as CV; // 캘린더
 import 'package:flutter/material.dart';
@@ -64,18 +66,39 @@ class _CalendarViewState extends State<CalendarView> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Expanded(
-                      flex: 7,
+                      flex: 8,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Expanded(child:Card(child: Center(child: Text(textAlign: TextAlign.center, "Priority 1\n${snapshot.data![0].task}")))),
-                          Expanded(child:Card(child: Center(child: Text(textAlign: TextAlign.center, "Priority 2\n${snapshot.data![1].task}")))),
-                          Expanded(child:Card(child: Center(child: Text(textAlign: TextAlign.center, "Priority 3\n${snapshot.data![2].task}")))),
+                          Expanded(
+                            child:Card(
+                              child:ListTile(
+                                title: Text("Priority 1", textAlign: TextAlign.center,),
+                                subtitle: Text(snapshot.data![0].task, style: TextStyle(fontSize:20),textAlign: TextAlign.center,)
+                              )
+                            )
+                          ),
+                          Expanded(
+                            child:Card(
+                              child:ListTile(
+                                title: Text("Priority 2", textAlign: TextAlign.center,),
+                                subtitle: Text(snapshot.data![1].task, style: TextStyle(fontSize:20),textAlign: TextAlign.center,)
+                              )
+                            )
+                          ),
+                          Expanded(
+                            child:Card(
+                              child:ListTile(
+                                title: Text("Priority 3", textAlign: TextAlign.center,),
+                                subtitle: Text(snapshot.data![2].task, style: TextStyle(fontSize:20),textAlign: TextAlign.center,)
+                              )
+                            )
+                          ),
                         ]
                       )
                     ),
                     Expanded(
-                      flex: 3,
+                      flex: 2,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(), 
                         onPressed:() async{
@@ -85,6 +108,10 @@ class _CalendarViewState extends State<CalendarView> {
                             Map<String, DateTime> endTime = {};
                             List<PlanTime> planList = [];
 
+                            List<Color> colors = [const Color.fromARGB(255, 171, 222, 230), const Color.fromARGB(255, 203, 170, 203), const Color.fromARGB(255, 255, 255, 181), Color.fromARGB(255, 255, 204, 182), Color.fromARGB(255, 243, 176, 195)];
+                            final random = Random();
+
+  
                             final selAll = await getAllPlan();
                             for(final it in selAll) {
                               nameList.add(it.task);
@@ -96,7 +123,7 @@ class _CalendarViewState extends State<CalendarView> {
                               startTime[it.task] = DateTime(selectedDay.year, selectedDay.month, selectedDay.day, it.startTime ~/ 60, it.startTime % 60);
                               endTime[it.task] = DateTime(selectedDay.year, selectedDay.month, selectedDay.day, it.endTime ~/ 60, it.endTime % 60);
 
-                              planList.add(PlanTime(title: it.task, description: "", start: startTime[it.task]!, end: endTime[it.task]!));
+                              planList.add(PlanTime(title: it.task, description: "", start: startTime[it.task]!, end: endTime[it.task]!,backgroundColor: colors[random.nextInt(colors.length)]));
                             }
 
                             if(context.mounted) {
