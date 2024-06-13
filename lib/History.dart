@@ -100,25 +100,36 @@ class _HistoryViewState extends State<HistoryView> {
           }
 
           uncheck = maxStreakSize - check;
+          double fontSize = MediaQuery.of(context).size.width * 0.3 / 15;
 
           //테이블 그리기
           return Column(
             children:[
               Expanded(flex: 1, child: Container(width: double.infinity, child: Text("연속$currentStack일 진행중입니다", textAlign: TextAlign.start))),
+              Table(
+                  children: [
+                    TableRow(
+                      children: List.generate(7, (colIndex) {
+                        if(colIndex == 0) {
+                          return Center(
+                            child: Text(
+                              "Today",
+                              style: TextStyle(fontSize: fontSize),
+                              textAlign: TextAlign.center
+                            )
+                          );
+                        }
+
+                        return TableCell(child: Container(color: Colors.green));
+                      }),
+                    )
+                  ],
+              ),
               Expanded(
                 flex: 9,
                 child: Table(
                   border: TableBorder.all(),
-                  children: List<TableRow>.generate(6, (rowIndex) {
-                    if(rowIndex == 0) {
-                      return TableRow(
-                        children: List.generate(7, (colIndex) {
-                          if(colIndex == 0) return Container(child: Center(child: Text(style: TextStyle(fontSize: MediaQuery.of(context).size.width*0.3/15), "Today", textAlign: TextAlign.center,)));
-                          return Container();
-                        }),
-                      );
-                    }
-
+                  children: List<TableRow>.generate(5, (rowIndex) {
                     return TableRow(
                       children: List<Widget>.generate(7, (colIndex) {
                         int itemIndex = rowIndex * 7 + colIndex;
@@ -147,7 +158,7 @@ class _HistoryViewState extends State<HistoryView> {
                 child: PieChart(
                   initialAngleInDegree: -90,
                   colorList: const [Colors.green, Colors.red],
-                  dataMap: {'했음': check.toDouble(), '안했음': uncheck.toDouble()},
+                  dataMap: {'일정을 세운 날': check.toDouble(), '일정을 세우지 않은 날': uncheck.toDouble()},
                   legendOptions: const LegendOptions(
                     legendPosition: LegendPosition.bottom,
                     showLegendsInRow: true
