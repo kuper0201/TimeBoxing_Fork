@@ -74,10 +74,7 @@ class CustomTable extends StatelessWidget {
             tableRowCount = (maxStreakSize/7).ceil();
           }
 
-          //maxStreakSize is tableRowCount*7
-          maxStreakSize = tableRowCount*7;
-
-          List<bool> items = List.generate(maxStreakSize, (_) => false);
+          List<bool> items = List.generate(tableRowCount*7, (_) => false);
           
           int idx = 0;
           label : for(final d in converted) {
@@ -95,7 +92,7 @@ class CustomTable extends StatelessWidget {
             children: List<TableRow>.generate(tableRowCount, (rowIndex) {
               return TableRow(
                 children: List<Widget>.generate(7, (colIndex) {
-                  int itemIndex = rowIndex * 7 + colIndex;
+                  int itemIndex =  maxStreakSize + colIndex;
                   // 리스트의 빈값에 false초기화
                   bool ?item = itemIndex < items.length ? items[itemIndex] : null;
                   bool isFirstItem = itemIndex == 0;
