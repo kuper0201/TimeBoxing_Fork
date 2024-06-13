@@ -92,9 +92,9 @@ class CustomTable extends StatelessWidget {
             children: List<TableRow>.generate(tableRowCount, (rowIndex) {
               return TableRow(
                 children: List<Widget>.generate(7, (colIndex) {
-                  int itemIndex =  maxStreakSize + colIndex;
+                  int itemIndex = rowIndex * 7 + colIndex;
                   // 리스트의 빈값에 false초기화
-                  bool ?item = itemIndex < items.length ? items[itemIndex] : null;
+                  bool ?item = itemIndex < maxStreakSize ? items[itemIndex] : null;
                   bool isFirstItem = itemIndex == 0;
                   return Container(
                     width: cellSize,
