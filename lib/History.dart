@@ -158,7 +158,7 @@ class _HistoryViewState extends State<HistoryView> {
                 child: PieChart(
                   initialAngleInDegree: -90,
                   colorList: const [Colors.green, Colors.red],
-                  dataMap: {'일정을 세운 날': check.toDouble(), '일정을 세우지 않은 날': uncheck.toDouble()},
+                  dataMap: {'O': check.toDouble(), 'X': uncheck.toDouble()},
                   legendOptions: const LegendOptions(
                     legendPosition: LegendPosition.bottom,
                     showLegendsInRow: true
