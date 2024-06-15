@@ -157,7 +157,7 @@ class _HistoryViewState extends State<HistoryView> {
                 flex: 11,
                 child: PieChart(
                   initialAngleInDegree: -90,
-                  colorList: const [Colors.green, Colors.red],
+                  colorList: const [Color.fromARGB(255, 119, 221, 119), Color.fromARGB(255, 255, 105, 97)],
                   dataMap: {'O': check.toDouble(), 'X': uncheck.toDouble()},
                   legendOptions: const LegendOptions(
                     legendPosition: LegendPosition.bottom,
